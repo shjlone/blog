@@ -3,7 +3,7 @@ title: react-native-elements
 tags: React Native 
 ---
 
-
+[https://reactnativeelements.com/docs](https://reactnativeelements.com/docs)是一套UI组件库
 
 
 
@@ -13,8 +13,6 @@ tags: React Native
 
 ### 基本用法
 
-
-[https://reactnativeelements.com/docs/1.2.0/icon](https://reactnativeelements.com/docs/1.2.0/icon)查阅基本属性和使用
 
 ```JavaScript
 
@@ -68,4 +66,4 @@ tags: React Native
 
 
 
-https://github.com/react-native-elements
+- [https://github.com/react-native-elements](https://github.com/react-native-elements)

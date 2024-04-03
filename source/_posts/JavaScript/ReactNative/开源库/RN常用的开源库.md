@@ -109,7 +109,7 @@ react-native-code-push是一个用于React Native应用的开源库，它允许�
 
 ### react-native-fast-image
 
-它提供了比React Native内置的Image组件更高效的图片加载。
+它提供了比React Native内置的Image组件更高效的图片加载。iOS使用SDWebImage，Android使用Glide。
 
 ### react-native-get-random-values
 

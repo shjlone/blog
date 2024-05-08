@@ -7,7 +7,23 @@ tags: React
 
 ## React Hooks产生的原因
 
-Functional（Stateless）Component，功能组件也叫无状态组件，一般只负责渲染。
+
+由于类组件存在一些缺点：
+
+- 大型组件很难拆分和重构，也很难测试。
+- 业务逻辑分散在组件的各个方法之中，导致重复逻辑或关联逻辑。
+- 组件类引入了复杂的编程模式，比如 render props 和高阶组件。
+
+于是有了函数式组件。一般的编程原则是一个函数只做一件事，那么如果这个函数组件要进行日志存储、改变状态等操作时如何处理呢？
+函数式编程将那些跟数据计算无关的操作，都称为 "副效应" （side effect） 。钩子（hook）就是 React 函数组件的副效应解决方案，用来为函数组件引入副效应。
+
+
+
+## 组件类型
+
+### Functional（Stateless）Component
+
+功能组件也叫无状态组件，一般只负责渲染。
 
 ```JavaScript
 
@@ -16,7 +32,9 @@ function Welcome(props) {
 }
 ```
 
-Class（Stateful）Component，类组件也是有状态组件，一般有交互逻辑和业务逻辑。
+### Class（Stateful）Component
+
+类组件也是有状态组件，一般有交互逻辑和业务逻辑。
 
 ```JavaScript
 class Welcome extends React.Component {
@@ -40,7 +58,9 @@ class Welcome extends React.Component {
 ```
 
 
-Presentational Component则是和功能组件类似
+### Presentational Component
+
+和功能组件类似
 
 ```JavaScript
 const Hello = (props) => {
@@ -53,9 +73,13 @@ const Hello = (props) => {
 
 ```
 
+## 常用Hooks
+
 ![](./hooks_1.png)
 
-- useState：状态管理，某个状态发生变化，组件重新渲染，使用该状态的组件及其子组件都会重新渲染
+### useState
+
+状态管理，某个状态发生变化，组件重新渲染，使用该状态的组件及其子组件都会重新渲染
 
 ```JavaScript
 function App() {
@@ -87,7 +111,9 @@ function ComponentC() {
 }
 ```
 
-- useEffect： 在**函数组件中**执行副作用操作，方便，且避免不必要的bug
+### useEffect
+
+在**函数组件中**执行副作用操作，方便，且避免不必要的bug
 
 ```JavaScript
 import React, { useState, useEffect } from 'react';
@@ -110,7 +136,9 @@ function Example() {
 }
 ```
 
-- useRef：用于在不进行渲染的情况下存储和访问最新的值
+### useRef
+
+用于在不进行渲染的情况下存储和访问最新的值
 
 1. 访问 DOM 元素：你可以将 ref 对象赋值给 JSX 元素的 ref 属性，然后在其他地方通过 .current 属性访问这个元素。例如：
 
@@ -150,7 +178,9 @@ function Timer() {
 }
 ```
 
-- useReducer：接受一个reducer函数和一个初始值，返回新的状态和一个dispatch函数，通过调用dispatch函数来更新状态
+### useReducer
+
+接受一个reducer函数和一个初始值，返回新的状态和一个dispatch函数，通过调用dispatch函数来更新状态
 
 ```JavaScript
 import React, { useReducer } from 'react';
@@ -180,13 +210,24 @@ function Counter() {
 }
 ```
 
-- useCallback：
+### useCallback
 
 
-- useImperativeHandle
+### useImperativeHandle
 
-React Hooks组件从v16.8开始
 
+
+
+## 自定义Hooks
+
+
+
+
+
+## 参考
+
+- [React Hooks 入门教程](https://www.ruanyifeng.com/blog/2019/09/react-hooks.html)
+- [轻松学会 React 钩子：以 useEffect() 为例](https://www.ruanyifeng.com/blog/2020/09/react-hooks-useeffect-tutorial.html)
 - [官方文档Introducing Hooks](https://legacy.reactjs.org/docs/hooks-intro.htm)
 - [React Hooks 入门教程](https://www.ruanyifeng.com/blog/2019/09/react-hooks.html)
 - [使用 Effect Hook](https://zh-hans.legacy.reactjs.org/docs/hooks-effect.html)

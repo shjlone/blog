@@ -22,9 +22,11 @@ tags: React Native
 - 方法的返回类型必须是 void。
 - 方法的参数类型必须是 React 支持的类型，例如 String、ReadableMap、Callback、Promise 等。
 
+### 用法
+
 在module中定义可以被JS调用的函数
 
-### 1. 使用`集成到现有Android应用`中的IndexModule文件，添加一个ReactMethod
+#### 1. 使用`集成到现有Android应用`中的IndexModule文件，添加一个ReactMethod
 
 ```Java
 
@@ -71,7 +73,7 @@ public class IndexModule extends ReactContextBaseJavaModule {
 
 
 
-### 2. js调用
+#### 2. js调用
 
 ```JavaScript
 
@@ -88,6 +90,25 @@ export default NativeModules.index;
 import ToastExample from './ToastExample';
 ToastExample.show('hoho', ToastExample.SHORT);
 
+```
+
+### 同步方法
+
+如果需要同步返回结果，可以使用`isBlockingSynchronousMethod`参数，该方法会阻塞JS线程，直到返回结果
+
+```Java
+@ReactMethod(isBlockingSynchronousMethod = true)
+public String getUniqueIdSync() {
+  // 这个方法可以同步返回结果
+  return "uniqueId";
+}
+```
+
+
+```JavaScript
+import { NativeModules } from 'react-native';
+
+let uniqueId = NativeModules.MyModule.getUniqueIdSync();
 ```
 
 

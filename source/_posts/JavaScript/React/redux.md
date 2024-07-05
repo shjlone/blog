@@ -11,6 +11,14 @@ tags: JavaScript Redux
 
 ## 基本概念和API
 
+
+
+Redux 引入的概念其实并不多，主要就是三个：State、Action 和 Reducer。
+
+- 其中 State 即 Store，一般就是一个纯 JavaScript Object。
+- Action 也是一个 Object，用于描述发生的动作。
+- 而 Reducer 则是一个函数，接收 Action 和 State 并作为参数，通过计算得到新的 Store。
+
 ### Store
 
 Store是保存数据的地方，你可以把它看成一个容器。整个应用只能有一个Store。

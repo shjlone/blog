@@ -71,3 +71,4 @@ tags: TypeScript
 
 - [耗时一年整理，全网最全的TypeScript踩坑集锦(tsconfig.json 常用配置项注释以及问题）](https://wuzaofeng.github.io/learning/typescript/ts-collection-config.html#tsconfig-json-%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9)
 - [https://www.tslang.cn/docs/handbook/tsconfig-json.html](https://www.tslang.cn/docs/handbook/tsconfig-json.html)
+- [https://wangdoc.com/typescript/tsconfig.json](https://wangdoc.com/typescript/tsconfig.json)

@@ -4,6 +4,7 @@ tags: TypeScript JavaScript
 ---
 
 
+在JavaScript的基础上添加了类型系统，可以在编译时检查类型，提高代码的可读性和可维护性。
 
 
 约定使用 TypeScript 编写的文件以 .ts 为后缀，用 TypeScript 编写 React 时，以 .tsx 为后缀。
@@ -19,7 +20,7 @@ node xxx.js
 
 ## 基础
 
-### 原始数据类型
+### 数据类型
 
 JavaScript的类型分为：
 
@@ -30,6 +31,48 @@ JavaScript的类型分为：
 
 ```typescript
 
+const x: boolean = false;
+const y: string = 'hello';
+const z: number = 123;
+const a: bigint = 123n;
+const b: symbol = Symbol('foo');
+const c: object = { foo: 123 };
+let d: undefined = undefined;//表示为定义，以后可能会有定义
+const d: null = null;
+
+let x:'hello'; //值类型
+
+x = 'hello'; // 正确
+x = 'world'; // 报错
+
+let x:string|number; //联合类型
+
+x = 123; // 正确
+x = 'abc'; // 正确
+
+//交叉类型
+let obj:
+  { foo: string } &
+  { bar: string };
+
+obj = {
+  foo: 'hello',
+  bar: 'world'
+};
+
+type A = { foo: number };
+
+type B = A & { bar: number };
+
+
+type Age = number;
+
+let age:Age = 55;
+
+// 'hello' // 字面量
+// new String('hello') // 包装对象
+
+
 ### 接口
 
 // 接口类型
@@ -37,7 +80,8 @@ interface Person {
   name: string;
   age?: number; //?表示可选属性
   readonly id: number; //只读属性
-  [propName: string]: any; //任意属性
+  [propName: string]: any; //任意属性，TypeScript 实际上会关闭这个变量的类型检查。即使有明显的类型错误，只要句法正确，都不会报错
+  x: unknown; //未知类型，为了解决any的污染问题，unknown类型只能赋值给unknown和any类型，但是不能赋值给其他类型；不能直接调用unknown类型变量的方法和属性
 }
 
 
@@ -48,6 +92,37 @@ let tom: Person = {
   gender: 'male'
 };
 
+
+```
+
+
+### 数组
+
+```typescript
+
+let arr: number[] = [1, 2, 3, 4, 5];
+let arr: (number|string)[] = [1, 2, 3, 4, '5'];
+let arr: Array<number> = [1, 2, 3, 4, 5];
+
+```
+
+
+
+### 元组
+
+```typescript
+
+let t:[number] = [1];
+
+
+//元组的成员可以添加成员名，这个成员名是说明性的，可以任意取名，没有实际作用。
+type Color = [
+  red: number,
+  green: number,
+  blue: number
+];
+
+const c:Color = [255, 255, 255];
 
 ```
 
@@ -88,7 +163,46 @@ let tom: Person = {
     /// <reference /> 三斜线指令
 ```
 
+## 函数
 
+```typescript
+
+//变量被赋值为一个函数的写法
+// 写法一
+const hello = function (txt:string) {
+  console.log('hello ' + txt);
+}
+
+// 写法二
+const hello:
+  (txt:string) => void
+= function (txt) {
+  console.log('hello ' + txt);
+};
+
+type MyFunc = (txt:string) => void;
+
+const hello:MyFunc = function (txt) {
+  console.log('hello ' + txt);
+};
+
+
+// 属性类型以分号结尾
+type MyObj = {
+  x:number;
+  y:number;
+};
+
+// 属性类型以逗号结尾
+type MyObj = {
+  x:number,
+  y:number,
+};
+
+```
+
+
+### 解构赋值
 
 
 ## import中@的作用

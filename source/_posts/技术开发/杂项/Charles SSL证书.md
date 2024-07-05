@@ -67,13 +67,12 @@ toc: true
 
 点击 `Help` -> `SSL Proxying` -> `Install Charles Root Certificate` -> `安装证书`
 
-选择将所有的证书都放入`受信任的根证书颁发机构`
+选择将所有的证书都放入`受信任的根证书颁发机构`，钥匙链中双击证书，选择`信任`，使用此证书时，选择`始终信任`
 
-Mac需要在钥匙链中将证书设置为永久信任
 
 ### 手机配置
 
-连接跟电脑一样的网络，配置代理连接charles。浏览器访问`chls.pro/ssl`，下载安装证书
+连接跟电脑一样的网络，配置代理连接charles（在wifi中配置IP、port）。浏览器访问`chls.pro/ssl`，下载安装证书
 
 
 ## 注意事项

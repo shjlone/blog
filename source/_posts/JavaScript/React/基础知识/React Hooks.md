@@ -7,7 +7,6 @@ tags: React
 
 ## React Hooks产生的原因
 
-
 由于类组件存在一些缺点：
 
 - 大型组件很难拆分和重构，也很难测试。
@@ -16,8 +15,6 @@ tags: React
 
 于是有了函数式组件。一般的编程原则是一个函数只做一件事，那么如果这个函数组件要进行日志存储、改变状态等操作时如何处理呢？
 函数式编程将那些跟数据计算无关的操作，都称为 "副效应" （side effect） 。钩子（hook）就是 React 函数组件的副效应解决方案，用来为函数组件引入副效应。
-
-
 
 ## 组件类型
 
@@ -56,7 +53,6 @@ class Welcome extends React.Component {
 }
 
 ```
-
 
 ### Presentational Component
 
@@ -210,19 +206,62 @@ function Counter() {
 }
 ```
 
+
+
+### useMemo
+
+useMemo(fn, deps);
+
+缓存计算结果。fn 是产生所需数据的一个计算函数。通常来说，fn 会使用 deps 中声明的一些变量来生成一个结果，用来渲染出最终的 UI。
+
+**好处：**
+
+- 避免重复计算
+- 避免不必要的渲染
+
+
+
 ### useCallback
 
+useCallback(fn, deps)
+
+缓存函数。fn 是定义的回调函数，deps 是依赖的变量数组。只有当某个依赖变量发生变化时，才会重新声明 fn 这个回调函数。useCallback 的功能其实是可以用 useMemo 来实现的
+
+```TypeScript
+import React, { useState, useCallback } from 'react'; 
+
+function Counter() { 
+  const [count, setCount] = useState(0);
+  const handleIncrement = useCallback( 
+    () => setCount(count + 1), 
+    [count], // 只有当 count 发生变化时，才会重新创建回调函数 
+  ); 
+   return <button onClick={handleIncrement}>+</button>;
+  }
+```
+
+
+
+### useContext
+
+定义全局状态。React 提供了 Context 这样一个机制，能够让所有在某个组件开始的组件树上创建一个 Context。这样这个组件树上的所有组件，就都能访问和修改这个 Context 了。那么在函数组件里，我们就可以使用 useContext 这样一个 Hook 来管理 Context。
+
+```TypeScript
+
+
+const MyContext = React.createContext(initialValue);
+
+
+const value = useContext(MyContext);
+
+
+
+
+```
 
 ### useImperativeHandle
 
-
-
-
 ## 自定义Hooks
-
-
-
-
 
 ## 参考
 

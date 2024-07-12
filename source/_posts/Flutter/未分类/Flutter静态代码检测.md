@@ -46,7 +46,7 @@ analyzer:
   language: # 启用更严格的类型检查
     strict-casts: true # 类型推理引擎不再将 dynamic 进行隐式类型转换
     strict-inference: true # 确保当类型推理引擎无法确定静态类型时，不再选择dynamic 类型
-    strict-raw-types: true # 确保当类型推理引擎，由于省略类型参数而无法确定静态类型时，不再选择dynamic 类型
+    strict-raw-types: true # 确保当类型推理引擎，由于省略类型参数而无法确定静态类型时，不再选择dynamic类型
   errors: # 设置严重程度
     invalide_assignment: warning
     missing_return: error

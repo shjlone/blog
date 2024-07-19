@@ -60,7 +60,6 @@ flutter analyze --no-pub
 
 相当于命令flutter run命令,不同之处在很多执行都是自己手动,比如热重载,
 
-
 ## build
 
 构建应用程序的apk,appbundle,aot,iOS, iOS应用需要在Mac上构建
@@ -77,11 +76,11 @@ flutter build appbundle
 切换flutter不同的版本,在执行flutter channel会输出不同分支信息,默认使用stable分支。
 
 有四个分支：
+
 - master
 - dev
 - beta
 - stable
-
 
 ```shell
 
@@ -96,6 +95,7 @@ flutter channel dev # 切换到dev channel
 ## config
 
 可以用于指定gradle,android sdk,android studio的目录或者开启,禁用analytics选项,analytics选项用于flutter工具的报告
+
 ```shell
 flutter config --gradle-dir /gradle/
 ```
@@ -103,7 +103,8 @@ flutter config --gradle-dir /gradle/
 ## devices
 
 列出已经连接到计算机的设备
-```
+
+```shell
 flutter devices
 NX569J                    • 192.168.43.1:5555 • android-arm64 • Android 7.1.2 (API 25)
 Android SDK built for x86 • emulator-5554     • android-x86   • Android 9 (API 28) (emulator)
@@ -113,7 +114,7 @@ Android SDK built for x86 • emulator-5554     • android-x86   • Android 9 
 
 检查开发工具链是否完整安装,对于安装环境非常有用处
 
-```
+```shell
 flutter doctor
 
 Doctor summary (to see all details, run flutter doctor -v):
@@ -129,6 +130,7 @@ Doctor summary (to see all details, run flutter doctor -v):
 ## drive
 
 执行flutter ui测试,该工具类似与web端的`Selenium`,`WebDriver`,`Protractor`.你可以指定不同模式进行测试,可以是debug,profile,release,flavor模式,flavor模式可以指定平台规范,你还可以指定在不同的平台测试,甚至可以指定页面路由
+
 ```shell
 flutter drive --debug --target-platform android-x86
 ```
@@ -136,6 +138,7 @@ flutter drive --debug --target-platform android-x86
 ## emulators
 
 列出,创建,启动模拟器,默认是列出模拟器
+
 ```shell
 
 flutter emulators --launch flutter_emulator #启动
@@ -162,7 +165,6 @@ flutter format dartfile
 2. 通过adb install来安装APK
 3. 通过adb am start来启动应用
 
-
 ```shell
 # profile方式运行，对于Profile模式，启动Observatory调试器，可通过127.0.0.1:xxx地址，打开网页版性能分析工具Observatory，其中包含有timeline工具，类似于Android的systrace。
 flutter run --profile --disable-service-auth-codes --local-engine-src-path=<FLUTTER_ROOT>/engine/src --local-engine android_profile
@@ -172,27 +174,26 @@ flutter run --disable-service-auth-codes
 
 ```
 
-
-参数 |	说明
+参数 | 说明
 --- | ---
-–debug |	调试版本，这是默认模式
-–profile| 	profile版本
-–release |	发布版本
-–target-platform| 	指定app运行的目标平台，比如android-arm/android-arm64，iOS平台不可用
-–target=| 	主入口，默认值lib/main.dart
-–observatory-port| 	指定observatory端口，默认为0（随机生成可用端口）
-–disable-service-auth-codes| 	关闭observatory服务鉴权
-–trace-startup| 	跟踪应用启动/退出，并保存trace到文件
-–trace-skia |	跟踪skia，用于调试GPU线程
-–trace-systrace| 	转为systrace，适用于Android/Fuchsia
-–dump-skp-on-shader-compilation| 	转储触发着色器编译的skp，默认关闭
-–verbose-system-logs |	包括来自flutter引擎的详细日志记录
-–enable-software-rendering |	开启软件渲染，默认采用OpenGL或者Vulkan
-–skia-deterministic-rendering |	确定性采用skia渲染
-–no-hot |	可关闭热重载，默认是开启
-–start-paused| 	应用启动后暂停
-–local-engine-src-path |	指定本地引擎源码路径，比如xxx/engine/src
-–local-engine |	指定本地引擎类型，比如android_profile
+–debug | 调试版本，这是默认模式
+–profile|  profile版本
+–release | 发布版本
+–target-platform|  指定app运行的目标平台，比如android-arm/android-arm64，iOS平台不可用
+–target=|  主入口，默认值lib/main.dart
+–observatory-port|  指定observatory端口，默认为0（随机生成可用端口）
+–disable-service-auth-codes|  关闭observatory服务鉴权
+–trace-startup|  跟踪应用启动/退出，并保存trace到文件
+–trace-skia | 跟踪skia，用于调试GPU线程
+–trace-systrace|  转为systrace，适用于Android/Fuchsia
+–dump-skp-on-shader-compilation|  转储触发着色器编译的skp，默认关闭
+–verbose-system-logs | 包括来自flutter引擎的详细日志记录
+–enable-software-rendering | 开启软件渲染，默认采用OpenGL或者Vulkan
+–skia-deterministic-rendering | 确定性采用skia渲染
+–no-hot | 可关闭热重载，默认是开启
+–start-paused|  应用启动后暂停
+–local-engine-src-path | 指定本地引擎源码路径，比如xxx/engine/src
+–local-engine | 指定本地引擎类型，比如android_profile
 
 ## verion
 
@@ -226,6 +227,7 @@ flutter install
 ## screenshot
 
 截取当前屏幕,默认是将图片输出到家目录下,使用-o指定输出目录
+
 ```shell
 flutter screenshot -o /home/work
 ```
@@ -233,7 +235,6 @@ flutter screenshot -o /home/work
 ## packages
 
 获取,测试,更新依赖包,`flutter pub` 将会传递剩余参数到dart工具的pub
-
 
 ## pub
 
@@ -256,13 +257,11 @@ pub publish #发布
 
 ```
 
-
 ## 修改源码调试
 
 > /path/to/flutter/bin/cache/flutter_tools.stamp
 
 当你修改了flutter tools的源码，删除上面这个文件，代码即可生效
-
 
 ## 参考
 

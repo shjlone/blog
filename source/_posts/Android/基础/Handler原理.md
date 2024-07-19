@@ -9,15 +9,13 @@ Hanlder系列目录：
 - [Handler基本用法](./Handler基本用法.html)
 - [Handler原理](./Handler原理.html)
 
-
-
 ## 概要
 
 Handler是Android子线程和主线程之间通信的一种机制。像Qt等技术使用的也是类似的消息机制。
 
 我们站在设计者的角度思考，如果要自己搭建一套线程间通信会怎么做？
 
-首先应该有个消息队列queue，然后在线程中无线轮询，发现队列里面有数据了，就拿出来，调用其target的回调。Android就是这样来设计的，而Handler类只是一个
+首先应该有个消息队列queue，然后在线程中无限轮询，发现队列里面有数据了，就拿出来，调用其target的回调。Android就是这样来设计的，而Handler类只是一个
 辅助，它有消息和对象的引用，方便调用。HandlerThread呢，又帮我们封装了一个用于两个子线程的通信。它帮我们考虑到了异步调用的时间先后问题。
 
 在native层，还是基于pthread相关API的封装。
@@ -45,7 +43,6 @@ Handler是Android子线程和主线程之间通信的一种机制。像Qt等技�
 3. 消息循环
 4. 消息处理
 
-
 ![](./1.png)
 
 **注意**
@@ -54,7 +51,6 @@ Handler是Android子线程和主线程之间通信的一种机制。像Qt等技�
 - 一个Looper可以绑定多个线程的Handler（实现线程间通信）
 - 在Looper中有一个setMessageLogging方法，可以添加日志的监听，用于分析所有的消息
   
-
 ## 源码分析
 
 按照我们的使用顺序，先看看Handler的构造函数
@@ -144,6 +140,7 @@ public static void main(String[] args) {
 }
 
 ```
+
 那么Looper内部又做了什么呢？
 
 ```java
@@ -288,24 +285,17 @@ public void dispatchMessage(@NonNull Message msg) {
 定义了一个handleMessage(Message msg);方法，这个怎么实现呢？handler类里同样有Handler(Callback callback)构造方法
 3. 最后才轮到handler类里的方法handleMessage来处理消息。
 
-
-
 ## 底层原理
 
 ![](./handler_native.png)
-
-
-
-
 
 ## Handler引起的内存泄露原因以及最佳解决方案
 
 Handler允许我们发送延时消息，如果在延时期间用户关闭了Activity，那么该 Activity 会泄露。 这个泄露是因为 Message 会持有 Handler，
 而又因为 Java 的特性，内部类会持有外部类，使得 Activity 会被 Handler 持有，这样最终就导致 Activity 泄露。
 
-将 Handler 定义成静态的内部类，在内部持有 Activity 的弱引用，并在Acitivity的onDestroy()中调用handler.removeCallbacksAndMessages(null)
+将Handler定义成静态的内部类，在内部持有 Activity 的弱引用，并在Acitivity的onDestroy()中调用handler.removeCallbacksAndMessages(null)
 及时移除所有消息。具体用法可以参考[Handler基本用法](./Handler基本用法.html)
-
 
 ## 参考
 

@@ -1,5 +1,5 @@
 ---
-title: 生命周期
+title: setState具体做了什么
 toc: true
 tags: Flutter
 ---
@@ -7,8 +7,19 @@ tags: Flutter
 
 ![](./lifecycle_1.png)
 
+## setState流程
 
-## setState
+1. 标脏，将对应element添加到dirtyElement队列中
+2. 触发vsync
+3. 下一帧drawFrame
+
+- buildScope
+  - rebuild
+    - performRebuild
+      - didChangeDependencies
+      - build
+
+### updateChild
 
 调用setState()之后，它所有的子节点调用updateChild(Element child, Widget newWidget, dynamic newSlot)：
 
@@ -20,9 +31,7 @@ tags: Flutter
     1. 如果一致则说明子Widget没有改变，只是需要根据newWidget(配置清单)更新下当前节点的数据child.update(newWidget)；
     2. 如果不一致说明这个位置发生变化，则**deactivateChild(child)**后返回**inflateWidget(newWidget, newSlot)**;
 
-
-
-
+### GlobalKey
 
 ## 参考
 

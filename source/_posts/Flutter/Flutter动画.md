@@ -85,7 +85,7 @@ Tween对象不存储任何状态，相反，它提供了evaluate(Animation<doubl
 
 ## 基本用法
 
-```
+```dart
 class ScaleAnimationRoute extends StatefulWidget {
   const ScaleAnimationRoute({Key? key}) : super(key: key);
   
@@ -142,7 +142,7 @@ class _ScaleAnimationRouteState extends State<ScaleAnimationRoute>
 
 以上写法封装后便是AnimatedBuilder
 
-```
+```dart
 AnimatedBuilder({
     child: xx,
     animation: yy,//绑定Animation

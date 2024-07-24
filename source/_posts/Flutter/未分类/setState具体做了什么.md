@@ -13,6 +13,21 @@ tags: Flutter
 2. 触发vsync
 3. 下一帧drawFrame
 
+```dart
+void drawFrame() {
+  buildOwner!.buildScope(renderViewElement!); //重新构建widget树
+  pipelineOwner.flushLayout(); // 更新布局
+  pipelineOwner.flushCompositingBits(); //更新合成信息
+  pipelineOwner.flushPaint(); // 更新绘制
+  if (sendFramesToEngine) {
+    renderView.compositeFrame(); // 上屏，会将绘制出的bit数据发送给GPU
+    pipelineOwner.flushSemantics(); // this also sends the semantics to the OS.
+    _firstFrameSent = true;
+  }
+}
+
+```
+
 - buildScope
   - rebuild
     - performRebuild

@@ -209,3 +209,10 @@ void _updateInheritance() {
 
 从根节点到子节点，以runtimeType作为key，保存最新的Element对象。getElementForInheritedWidgetOfExactType方法可以通过类型查找离自己最近的类型的对象。
 dependOnInheritedWidgetOfExactType方法会注册依赖，当InheritedWidget发生变化时就会更新依赖它的子组件。
+
+
+
+
+## 参考
+
+- [InheritedWidget的使用和源码分析](https://juejin.cn/post/6943515602191384613)

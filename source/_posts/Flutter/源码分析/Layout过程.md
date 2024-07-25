@@ -6,6 +6,172 @@ tags: Flutter
 
 
 
+## 过程
+
+
+
+
+### 标记阶段
+
+
+markNeedsLayout方法会将当前节点标记为需要Layout。markNeedsLayout方法在很多地方都会被触发，比如UI的高宽发生变化，字体属性发生变化等。
+
+```dart
+class RenderObject {
+ void markNeedsLayout() {
+    if (_needsLayout) {//已经标记过
+      return;
+    }
+    if (_relayoutBoundary == null) {//当前节点不是布局边界，父节点受此影响，也需要被标记
+      _needsLayout = true;
+      if (parent != null) {
+        markParentNeedsLayout();
+      }
+      return;
+    }
+    if (_relayoutBoundary != this) {
+      markParentNeedsLayout();
+    } else {
+      _needsLayout = true;
+      if (owner != null) {
+        owner!._nodesNeedingLayout.add(this);
+        owner!.requestVisualUpdate();//请求刷新
+      }
+    }
+  }
+
+  void markParentNeedsLayout() {
+    _needsLayout = true;
+    final RenderObject parent = this.parent! as RenderObject;
+    if (!_doingThisLayoutWithCallback) {
+      parent.markNeedsLayout();
+    } else {
+    }
+  }
+
+}
+```
+
+### Flush阶段
+
+Layout开始于drawFrame的flushLayout，Layout过程也跟Build类似，先标记再处理。Layout是相对Render Tree而言的
+
+```dart
+class PipelineOwner {
+  void flushLayout() {
+    try {
+      while (_nodesNeedingLayout.isNotEmpty) {//存在需要更新Layout信息的节点
+        final List<RenderObject> dirtyNodes = _nodesNeedingLayout;
+        _nodesNeedingLayout = <RenderObject>[];
+        dirtyNodes.sort((RenderObject a, RenderObject b) => a.depth - b.depth);
+        for (int i = 0; i < dirtyNodes.length; i++) {
+          if (_shouldMergeDirtyNodes) {
+            _shouldMergeDirtyNodes = false;
+            if (_nodesNeedingLayout.isNotEmpty) {
+              _nodesNeedingLayout.addAll(dirtyNodes.getRange(i, dirtyNodes.length));
+              break;
+            }
+          }
+          final RenderObject node = dirtyNodes[i];
+          if (node._needsLayout && node.owner == this) {
+            node._layoutWithoutResize();//真正的Layout逻辑
+          }
+        }
+        _shouldMergeDirtyNodes = false;
+      }
+
+      for (final PipelineOwner child in _children) {//更新子节点
+        child.flushLayout();
+      }
+    } finally {
+      _shouldMergeDirtyNodes = false;
+    }
+  }
+
+}
+
+
+class RenderObject {
+  void _layoutWithoutResize() {
+    RenderObject? debugPreviousActiveLayout;
+    try {
+      performLayout();//用于开始具体的Layout逻辑，这个方法中会调用markNeedsPaint进行标记需要进行paint
+      markNeedsSemanticsUpdate();
+    } catch (e, stack) {
+      _reportException('performLayout', e, stack);
+    }
+    _needsLayout = false;
+    markNeedsPaint();
+  }
+}
+
+```
+
+
+总结：
+
+drawFrame-->flushLayout-->performLayout-->markNeedsPaint
+
+
+### 具体示例
+
+```dart
+
+class RenderView {
+    void performLayout() {
+    _size = configuration.size;
+    if (child != null) {
+      child!.layout(BoxConstraints.tight(_size));
+    }
+  }
+
+}
+
+class RenderObject {
+    void layout(Constraints constraints, { bool parentUsesSize = false }) {
+    if (!kReleaseMode && debugProfileLayoutsEnabled) {
+      Map<String, String>? debugTimelineArguments;
+    }
+    final bool isRelayoutBoundary = !parentUsesSize || sizedByParent || constraints.isTight || parent is! RenderObject;
+    final RenderObject relayoutBoundary = isRelayoutBoundary ? this : (parent! as RenderObject)._relayoutBoundary!;
+    if (!_needsLayout && constraints == _constraints) {
+      if (relayoutBoundary != _relayoutBoundary) {
+        _relayoutBoundary = relayoutBoundary;
+        visitChildren(_propagateRelayoutBoundaryToChild);
+      }
+      return;
+    }
+    _constraints = constraints;
+    if (_relayoutBoundary != null && relayoutBoundary != _relayoutBoundary) {
+      visitChildren(_cleanChildRelayoutBoundary);
+    }
+    _relayoutBoundary = relayoutBoundary;
+    if (sizedByParent) {//子节点大小完全取决于父节点
+      try {
+        performResize();
+      } catch (e, stack) {
+      }
+    }
+    RenderObject? debugPreviousActiveLayout;
+    try {
+      performLayout();//子节点自身实现布局逻辑
+      markNeedsSemanticsUpdate();
+    } catch (e, stack) {
+      _reportException('performLayout', e, stack);
+    }
+    _needsLayout = false;
+    markNeedsPaint();//标记当前节点需要重绘
+  }
+}
+
+```
+
+
+
+
+
+
+
 
 
 ## 布局
@@ -66,44 +232,6 @@ void layout(Constraints constraints, { bool parentUsesSize = false }) {
   // 将当前组件标记为需要重绘（因为布局发生变化后，需要重新绘制）
   markNeedsPaint();
 }
-
-```
-
-## 绘制
-
-**大致流程：**
-
-第一次绘制时，从上到下递归绘制子节点，每当遇到一个边界节点，判断如果该节点的layer属性是否为空，是就创建一个新的OffsetLayer并赋值给它；不是则使用。然后将layer传递给子节点，接下来：
-
-1. 如果子节点是非边界节点，且需要绘制，则：
-    - 第一次绘制：创建一个Canvas对象和一个PictureLayer，然后将它们绑定，后续调用Canvas绘制都会落到和其绑定的PictureLayer上，接着这个PictureLayer会加入到边界节点的layer中；
-    - 不是第一次绘制：复用已有的边界节点和Canvas对象；
-2. 如果子节点是边界节点，则对子节点递归上述过程。当子树递归完成后，就要将子节点的layer添加到父级layer中。
-
-RenderObject调用markNeedsRepaint来发起重绘：
-
-1. 从当前节点一直往父级查找，直到找到一个**绘制边界点**时终止查找，然后会将该绘制边界点添加到其PiplineOwner的_nodesNeedingPaint列表中。
-2. 在查找的过程中，会将自己到绘制边界点路径上所有节点的_needPaint属性设置为true，表示需要重绘。
-3. 请求新的frame，执行重绘流程。下一个frame就会走drawFrame流程，涉及到flushCompositingBits、flushPaint 和 compositeFrame 三个函数。
-
-```dart
-
-void markNeedsPaint() {
-  if (_needsPaint) return;
-  _needsPaint = true;
-  if (isRepaintBoundary) { // 如果是当前节点是边界节点
-      owner!._nodesNeedingPaint.add(this); //将当前节点添加到需要重新绘制的列表中。
-      owner!.requestVisualUpdate(); // 请求新的frame，该方法最终会调用scheduleFrame()
-  } else if (parent is RenderObject) { // 若不是边界节点且存在父节点
-    final RenderObject parent = this.parent! as RenderObject;
-    parent.markNeedsPaint(); // 递归调用父节点的markNeedsPaint
-  } else {
-    // 如果是根节点，直接请求新的 frame 即可
-    if (owner != null)
-      owner!.requestVisualUpdate();
-  }
-}
-
 
 ```
 

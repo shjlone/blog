@@ -34,6 +34,7 @@ class WidgetsBinding {
     ).attachToRenderTree(rootElement);//初始化
   }
 
+  /// 每一帧都会调用该方法
   void drawFrame() {
     buildOwner.buildScope(rootElement);
   }
@@ -75,6 +76,32 @@ class ComponentElement {
 }
 ```
 
+
+## 流程分析
+
+
+### 标脏阶段
+
+我们在需要触发刷新时会调用setState方法，会对该element进行标脏，然后擦除脏标记。
+
+```dart
+
+class State {
+  void setState(VoidCallback fn) {
+    final Object? result = fn() as dynamic;//执行用户的逻辑
+    _element!.markNeedsBuild();
+  }
+}
+
+class Element {
+  void markNeedsBuild() {
+    _dirty = true;
+    owner.scheduleBuildFor(this);//在BuildOwner中进一步标记
+  }
+}
+```
+
+
 ### BuildOwner
 
 作用：
@@ -103,13 +130,13 @@ class BuildOwner {
 
   /// setState方法会调用该方法
   void scheduleBuildFor(Element element) {
-    if (element._inDirtyList) {
+    if (element._inDirtyList) {//已经在脏列表中，重排
       _dirtyElementsNeedsResorting = true;
       return;
     }
     if (!_scheduledFlushDirtyElements && onBuildScheduled != null) {
       _scheduledFlushDirtyElements = true;
-      onBuildScheduled!();//通知下一帧要更新，对应WidgetsBinding中的_handleBuildScheduled方法，下一帧drawFrame会调用buildScope方法
+      onBuildScheduled!();//通知下一帧要更新，对应WidgetsBinding中的_handleBuildScheduled方法，调用ensureVisualUpdate，下一帧drawFrame会调用buildScope方法
     }
     _dirtyElements.add(element);//添加到脏列表
     element._inDirtyList = true;
@@ -132,10 +159,10 @@ class BuildOwner {
 // drawFrame会调用该方法
   @pragma('vm:notify-debugger-on-exception')
   void buildScope(Element context, [ VoidCallback? callback ]) {
-    if (callback == null && _dirtyElements.isEmpty) {
+    if (callback == null && _dirtyElements.isEmpty) {//第1步
       return;
     }
-    try {
+    try {//第2步
       _scheduledFlushDirtyElements = true;
       if (callback != null) {
         _dirtyElementsNeedsResorting = false;
@@ -148,14 +175,14 @@ class BuildOwner {
       _dirtyElementsNeedsResorting = false;
       int dirtyCount = _dirtyElements.length;
       int index = 0;
-      while (index < dirtyCount) {
+      while (index < dirtyCount) {//第3步，开始遍历脏节点
         final Element element = _dirtyElements[index];
         final bool isTimelineTracked = !kReleaseMode && _isProfileBuildsEnabledFor(element.widget);
         try {
-          element.rebuild();//触发对应生命周期方法，State的didChangeDependencies、build等
+          element.rebuild();//第4步，重新构建，触发对应生命周期方法，State的didChangeDependencies、build等
         } catch (e, stack) {
         }
-        index += 1;
+        index += 1;//第5步
         if (dirtyCount < _dirtyElements.length || _dirtyElementsNeedsResorting!) {
           _dirtyElements.sort(Element._sort);
           _dirtyElementsNeedsResorting = false;
@@ -240,26 +267,181 @@ class BuildOwner {
 
 ```
 
-## 流程分析
 
-我们在需要触发刷新时会调用setState方法，会对该element进行标脏，然后擦除脏标记。
+
+### Flush阶段
+
+我们知道Vsync信号到达后会触发BuildOwner的buildScope方法（参考上面的代码解释），该方法分为以下几个步骤：
+
+1. 检查参数，并标记当前进入Build流程
+2. callback的回调，一般用于首帧渲染时3棵树的创建，更新阶段该参数为null
+3. 脏节点排序，优先更新父节点效率更高
+4. 遍历脏节点，执行rebuild方法
+5. 第5步，先将index自增，再检查当前是否满足以下两种情况之一：
+  - dirtyCount < _dirtyElements.length：即在处理Element脏节点的过程中又有新的节点标记为脏
+  - _dirtyElementsNeedsResorting：通常由GlobalKey的复用导致，如果当前节点已经在列表中，则会将该字段设置为true(scheduleBuildFor方法中设置)
+
+满足任何一个都会导致_dirtyElements列表重新排序，然后将index重制到最近的一个非脏节点，并继续从该Element节点的索引进行rebuild方法
+
+6. 将_dirtyElements列表中的每个节点的_inDirtyList字段重置为false，然后清空列表，并重置相关字段
+
+
+
+对于rebuild，会调用performRebuild方法，该方法不同子类不一样的实现
 
 ```dart
+class Element {
+    @protected
+  @mustCallSuper
+  void performRebuild() {
+    _dirty = false;
+  }
+}
 
-class State {
-  void setState(VoidCallback fn) {
-    final Object? result = fn() as dynamic;
-    _element!.markNeedsBuild();
+///对于StatefulElement来说，rebuild会触发ComponentElement的performRebuild方法
+class ComponentElement {
+  void performRebuild() {
+    Widget? built;
+    try {
+      built = build();
+    } catch (e, stack) {
+      _debugDoingBuild = false;
+    } finally {
+      super.performRebuild(); // clears the "dirty" flag
+    }
+    try {
+      _child = updateChild(_child, built, slot);//完成子节点的更新
+      assert(_child != null);
+    } catch (e, stack) {
+      _child = updateChild(null, built, slot);
+    }
   }
 }
 
 class Element {
-  void markNeedsBuild() {
-    _dirty = true;
-    owner.scheduleBuildFor(this);
+  Element? updateChild(Element? child, Widget? newWidget, Object? newSlot) {
+    if (newWidget == null) {
+      if (child != null) {
+        deactivateChild(child);
+      }
+      return null;
+    }
+
+    final Element newChild;
+    if (child != null) {
+      bool hasSameSuperclass = true;
+      if (hasSameSuperclass && child.widget == newWidget) {//第1种情况
+        if (child.slot != newSlot) {
+          updateSlotForChild(child, newSlot);
+        }
+        newChild = child;
+      } else if (hasSameSuperclass && Widget.canUpdate(child.widget, newWidget)) {//第2种情况
+        if (child.slot != newSlot) {
+          updateSlotForChild(child, newSlot);
+        }
+        final bool isTimelineTracked = !kReleaseMode && _isProfileBuildsEnabledFor(newWidget);
+        if (isTimelineTracked) {
+          Map<String, String>? debugTimelineArguments;
+        }
+        child.update(newWidget);
+        newChild = child;
+      } else {//第3种情况
+        deactivateChild(child);
+        newChild = inflateWidget(newWidget, newSlot);
+      }
+    } else {//第4种情况
+      newChild = inflateWidget(newWidget, newSlot);
+    }
+    return newChild;
   }
 }
 ```
+
+- 第1种：Widget节点相同，直接同步slot，并复用现有的Element节点。
+- 第2种：科直接基于新的Widget节点更新，复用并更新现有的Element节点即可。不同的子类不一样的update，比如
+
+```dart
+class Element {
+  void update(Widget newWidget) {
+    _widget = newWidget;
+  }
+}
+
+
+class StatelessElement {
+  void update(Widget newWidget) {
+    super.update(newWidget);
+    _dirty = true;
+    rebuild();
+  }
+}
+
+class RenderObjectElement {
+  void update(Widget newWidget) {
+    super.update(newWidget);
+    widget.updateRenderObject(this, renderObject);//更新对应RenderObject
+    rebuild();
+  }
+}
+```
+
+- 第3种：当前Widget Tree的子节点完全不一样，需要移除原有的Element节点，并新建新的Element节点进行挂载
+
+```dart
+class Element {
+    void deactivateChild(Element child) {
+    child._parent = null;
+    child.detachRenderObject();
+    owner!._inactiveElements.add(child); // this eventually calls child.deactivate()
+  }
+}
+```
+
+
+### 清理阶段
+
+在Build流程中，对于执行了deactivate方法的节点，其_lifecycleState字段的属性为inactive，当Build、Layout、Paint、Composition在UI线程的工作结束后，BuildOwner会调用finalizeTree方法进行最后的处理，其会调用_unmountAll
+
+```dart
+class _InactiveElements {
+  void _unmountAll() {
+    _locked = true;
+    final List<Element> elements = _elements.toList()..sort(Element._sort);
+    _elements.clear();//对每一个inactive状态的节点进行清理
+    try {
+      elements.reversed.forEach(_unmount);
+    } finally {
+      _locked = false;
+    }
+  }
+
+  void _unmount(Element element) {
+    element.visitChildren((Element child) {
+      _unmount(child);
+    });
+    element.unmount();
+  }
+}
+
+
+class Element {
+    void unmount() {
+    if (kFlutterMemoryAllocationsEnabled) {
+      MemoryAllocations.instance.dispatchObjectDisposed(object: this);
+    }
+    final Key? key = _widget?.key;
+    if (key is GlobalKey) {
+      owner!._unregisterGlobalKey(key, this);//移除注册
+    }
+    _widget = null;
+    _dependencies = null;
+    _lifecycleState = _ElementLifecycle.defunct;//更新状态
+  }
+}
+
+```
+
+
 
 ## 参考
 

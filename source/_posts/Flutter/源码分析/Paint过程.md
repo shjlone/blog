@@ -5,6 +5,21 @@ tags: Flutter
 ---
 
 
+
+
+
+经过Build流程，Render Tree中绘制相关的基础信息已经完成更新；经过Layout流程，Render Tree中每个节点的大小和位置完成计算与存储，接下来进入Paint流程：基于Layout的信息生成绘制指令。
+
+
+## Compositing-State Mark阶段
+
+## Compositing-State Flush阶段
+
+## Paint Mark阶段
+
+## Paint Flush阶段
+
+
 PipelineOwner是『RenderObject Tree』与『RendererBinding』间的桥梁，在两者间起到沟通协调的作用
 
 

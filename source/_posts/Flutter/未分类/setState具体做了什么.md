@@ -15,7 +15,11 @@ tags: Flutter
 
 ```dart
 void drawFrame() {
+  //WidgetBinding
   buildOwner!.buildScope(renderViewElement!); //重新构建widget树
+
+
+  //RenderBinding
   pipelineOwner.flushLayout(); // 更新布局
   pipelineOwner.flushCompositingBits(); //更新合成信息
   pipelineOwner.flushPaint(); // 更新绘制

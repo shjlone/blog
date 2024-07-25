@@ -22,5 +22,5 @@ Key的分类
 
 ## 参考
 
-- [Flutter Key的原理和使用(四) GlobalKey 的用法](https://juejin.cn/post/7002242058618568740)
+
 

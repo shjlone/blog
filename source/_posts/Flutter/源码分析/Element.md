@@ -24,6 +24,22 @@ Widget是UI元素的配置数据，Element代表屏幕显示元素。主要作�
 
 ## 重要属性和方法
 
+Element的子类：
+
+- ComponentElement
+  - StatelessElement
+  - StatefulElement
+  - ProxyElement
+    - ParentDataElement
+    - InheritedElement
+- RenderObjectElement
+  - LeafRenderObjectElement
+  - SingleChildRenderObjectElement
+  - MultiChildRenderObjectElement
+    - TheatreElement
+  - RootRenderObjectElement
+- _NullElement
+
 ### 属性
 
 ```dart
@@ -177,7 +193,7 @@ class StatefulElement extends ComponentElement {
 - 修改_widget属性
 - 调用didUpdateWidget更新属性
 
-然后出发rebuild操作。
+然后触发rebuild操作。
 
 #### ProxyElement
 
@@ -455,7 +471,6 @@ Element有4种状态：initial，active，inactive，defunct。其对应的意�
 
 ![](./element_8.jpg)
 
-
 ## 总结
 
 Element继承自BuildContext，所以我们在平常使用的context其实就是Element。各种of方法其实就是操作Element树来获取相应对象。
@@ -463,3 +478,4 @@ Element继承自BuildContext，所以我们在平常使用的context其实就是
 ## 参考
 
 - [深入浅出 Flutter Framework 之 Element](http://zxfcumtcs.github.io/2020/05/17/deepinto-flutter-element/)
+- [Keys! What are they good for?](https://medium.com/flutter/keys-what-are-they-good-for-13cb51742e7d)

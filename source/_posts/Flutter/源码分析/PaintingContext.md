@@ -10,8 +10,8 @@ tags: Flutter
 ![](PaintingContext_1.png)
 
 - 继承自ClipContext，提供裁剪相关辅助方法
-- _currentLayer、_recorder、_canvas用于具体的绘制操作
-- _containerLayer
+- PictureLayer _currentLayer、_recorder、_canvas用于具体的绘制操作
+- ContainerLayer _containerLayer, Layer树的根节点
 
 
 ## 基本概念
@@ -100,6 +100,282 @@ void main() {
 }
 
 ```
+
+
+## PaintingContext
+
+```dart
+
+class PaintingContext extends ClipContext {
+
+  @protected
+  PaintingContext(this._containerLayer, this.estimatedBounds);
+
+  final ContainerLayer _containerLayer;//Layer树的根节点
+
+  final Rect estimatedBounds;
+
+  static void repaintCompositedChild(RenderObject child, { bool debugAlsoPaintedParent = false }) {
+    _repaintCompositedChild(
+      child,
+      debugAlsoPaintedParent: debugAlsoPaintedParent,
+    );
+  }
+
+  static void _repaintCompositedChild(
+    RenderObject child, {
+    bool debugAlsoPaintedParent = false,
+    PaintingContext? childContext,
+  }) {
+    OffsetLayer? childLayer = child._layerHandle.layer as OffsetLayer?;
+    if (childLayer == null) {
+      final OffsetLayer layer = child.updateCompositedLayer(oldLayer: null);//创建layer
+      child._layerHandle.layer = childLayer = layer;
+    } else {
+      Offset? debugOldOffset;
+      childLayer.removeAllChildren();
+      final OffsetLayer updatedLayer = child.updateCompositedLayer(oldLayer: childLayer);
+    }
+    child._needsCompositedLayerUpdate = false;
+    childContext ??= PaintingContext(childLayer, child.paintBounds);
+    child._paintWithContext(childContext, Offset.zero);
+
+    childContext.stopRecordingIfNeeded();
+  }
+
+  static void updateLayerProperties(RenderObject child) {
+    final OffsetLayer childLayer = child._layerHandle.layer! as OffsetLayer;
+    Offset? debugOldOffset;
+    final OffsetLayer updatedLayer = child.updateCompositedLayer(oldLayer: childLayer);
+    child._needsCompositedLayerUpdate = false;
+  }
+
+  static void debugInstrumentRepaintCompositedChild(
+    RenderObject child, {
+    bool debugAlsoPaintedParent = false,
+    required PaintingContext customContext,
+  }) {
+  }
+
+  void paintChild(RenderObject child, Offset offset) {
+    if (child.isRepaintBoundary) {
+      stopRecordingIfNeeded();
+      _compositeChild(child, offset);
+    } else if (child._wasRepaintBoundary) {
+      child._layerHandle.layer = null;
+      child._paintWithContext(this, offset);
+    } else {
+      child._paintWithContext(this, offset);
+    }
+  }
+
+  void _compositeChild(RenderObject child, Offset offset) {
+
+    // Create a layer for our child, and paint the child into it.
+    if (child._needsPaint || !child._wasRepaintBoundary) {
+      repaintCompositedChild(child, debugAlsoPaintedParent: true);
+    } else {
+      if (child._needsCompositedLayerUpdate) {
+        updateLayerProperties(child);
+      }
+    }
+    final OffsetLayer childOffsetLayer = child._layerHandle.layer! as OffsetLayer;
+    childOffsetLayer.offset = offset;
+    appendLayer(childOffsetLayer);
+  }
+
+  @protected
+  void appendLayer(Layer layer) {
+    layer.remove();
+    _containerLayer.append(layer);
+  }
+
+  bool get _isRecording {
+    final bool hasCanvas = _canvas != null;
+    return hasCanvas;
+  }
+
+/// 用于具体的绘制操作
+  PictureLayer? _currentLayer;
+  ui.PictureRecorder? _recorder;
+  Canvas? _canvas;
+
+  @override
+  Canvas get canvas {
+    if (_canvas == null) {
+      _startRecording();
+    }
+    return _canvas!;
+  }
+
+  void _startRecording() {
+    _currentLayer = PictureLayer(estimatedBounds);
+    _recorder = ui.PictureRecorder();
+    _canvas = Canvas(_recorder!);
+    _containerLayer.append(_currentLayer!);
+  }
+
+  VoidCallback addCompositionCallback(CompositionCallback callback) {
+    return _containerLayer.addCompositionCallback(callback);
+  }
+
+  @protected
+  @mustCallSuper
+  void stopRecordingIfNeeded() {
+    if (!_isRecording) {
+      return;
+    }
+    _currentLayer!.picture = _recorder!.endRecording();
+    _currentLayer = null;
+    _recorder = null;
+    _canvas = null;
+  }
+
+  void setIsComplexHint() {
+    _currentLayer?.isComplexHint = true;
+  }
+
+  void setWillChangeHint() {
+    _currentLayer?.willChangeHint = true;
+  }
+
+  void addLayer(Layer layer) {
+    stopRecordingIfNeeded();
+    appendLayer(layer);
+  }
+
+  void pushLayer(ContainerLayer childLayer, PaintingContextCallback painter, Offset offset, { Rect? childPaintBounds }) {
+    if (childLayer.hasChildren) {
+      childLayer.removeAllChildren();
+    }
+    // 在 append sub layer 前先终止现有的绘制操作
+    // stopRecordingIfNeeded 所执行的操作见上文
+    stopRecordingIfNeeded();
+    appendLayer(childLayer);
+      // 为 childLayer 创建新的 PaintingContext，以便独立进行绘制操作
+    final PaintingContext childContext = createChildContext(childLayer, childPaintBounds ?? estimatedBounds);
+
+    painter(childContext, offset);
+    childContext.stopRecordingIfNeeded();
+  }
+
+  @protected
+  PaintingContext createChildContext(ContainerLayer childLayer, Rect bounds) {
+    return PaintingContext(childLayer, bounds);
+  }
+
+  ClipRectLayer? pushClipRect(bool needsCompositing, Offset offset, Rect clipRect, PaintingContextCallback painter, { Clip clipBehavior = Clip.hardEdge, ClipRectLayer? oldLayer }) {
+    if (clipBehavior == Clip.none) {
+      painter(this, offset);
+      return null;
+    }
+    final Rect offsetClipRect = clipRect.shift(offset);
+    if (needsCompositing) {
+      final ClipRectLayer layer = oldLayer ?? ClipRectLayer();
+      layer
+        ..clipRect = offsetClipRect
+        ..clipBehavior = clipBehavior;
+      pushLayer(layer, painter, offset, childPaintBounds: offsetClipRect);
+      return layer;
+    } else {
+      clipRectAndPaint(offsetClipRect, clipBehavior, offsetClipRect, () => painter(this, offset));
+      return null;
+    }
+  }
+
+  ClipRRectLayer? pushClipRRect(bool needsCompositing, Offset offset, Rect bounds, RRect clipRRect, PaintingContextCallback painter, { Clip clipBehavior = Clip.antiAlias, ClipRRectLayer? oldLayer }) {
+    if (clipBehavior == Clip.none) {
+      painter(this, offset);
+      return null;
+    }
+    final Rect offsetBounds = bounds.shift(offset);
+    final RRect offsetClipRRect = clipRRect.shift(offset);
+    if (needsCompositing) {
+      final ClipRRectLayer layer = oldLayer ?? ClipRRectLayer();
+      layer
+        ..clipRRect = offsetClipRRect
+        ..clipBehavior = clipBehavior;
+      pushLayer(layer, painter, offset, childPaintBounds: offsetBounds);
+      return layer;
+    } else {
+      clipRRectAndPaint(offsetClipRRect, clipBehavior, offsetBounds, () => painter(this, offset));
+      return null;
+    }
+  }
+
+  ClipPathLayer? pushClipPath(bool needsCompositing, Offset offset, Rect bounds, Path clipPath, PaintingContextCallback painter, { Clip clipBehavior = Clip.antiAlias, ClipPathLayer? oldLayer }) {
+    if (clipBehavior == Clip.none) {
+      painter(this, offset);
+      return null;
+    }
+    final Rect offsetBounds = bounds.shift(offset);
+    final Path offsetClipPath = clipPath.shift(offset);
+    if (needsCompositing) {
+      final ClipPathLayer layer = oldLayer ?? ClipPathLayer();
+      layer
+        ..clipPath = offsetClipPath
+        ..clipBehavior = clipBehavior;
+      pushLayer(layer, painter, offset, childPaintBounds: offsetBounds);
+      return layer;
+    } else {
+      clipPathAndPaint(offsetClipPath, clipBehavior, offsetBounds, () => painter(this, offset));
+      return null;
+    }
+  }
+
+  ColorFilterLayer pushColorFilter(Offset offset, ColorFilter colorFilter, PaintingContextCallback painter, { ColorFilterLayer? oldLayer }) {
+    final ColorFilterLayer layer = oldLayer ?? ColorFilterLayer();
+    layer.colorFilter = colorFilter;
+    pushLayer(layer, painter, offset);
+    return layer;
+  }
+
+  TransformLayer? pushTransform(bool needsCompositing, Offset offset, Matrix4 transform, PaintingContextCallback painter, { TransformLayer? oldLayer }) {
+    final Matrix4 effectiveTransform = Matrix4.translationValues(offset.dx, offset.dy, 0.0)
+      ..multiply(transform)..translate(-offset.dx, -offset.dy);
+    if (needsCompositing) {
+      final TransformLayer layer = oldLayer ?? TransformLayer();
+      layer.transform = effectiveTransform;
+      pushLayer(
+        layer,
+        painter,
+        offset,
+        childPaintBounds: MatrixUtils.inverseTransformRect(effectiveTransform, estimatedBounds),
+      );
+      return layer;
+    } else {
+      canvas
+        ..save()
+        ..transform(effectiveTransform.storage);
+      painter(this, offset);
+      canvas.restore();
+      return null;
+    }
+  }
+
+  OpacityLayer pushOpacity(Offset offset, int alpha, PaintingContextCallback painter, { OpacityLayer? oldLayer }) {
+    final OpacityLayer layer = oldLayer ?? OpacityLayer();
+    layer
+      ..alpha = alpha
+      ..offset = offset;
+    pushLayer(layer, painter, Offset.zero);
+    return layer;
+  }
+
+  @override
+  String toString() => '${objectRuntimeType(this, 'PaintingContext')}#$hashCode(layer: $_containerLayer, canvas bounds: $estimatedBounds)';
+}
+```
+
+## 绘制流程
+
+![](./RenderObject_2.png)
+
+
+
+## Compositing
+
+Compositing，合成，属于 Rendering Pipeline 中的一环，表示是否要生成新的 Layer 来实现某些特定的图形效果
 
 ## 参考
 

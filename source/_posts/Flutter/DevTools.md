@@ -15,9 +15,6 @@ tags: Flutter
 - Logging View：查看正在运行的 Flutter 或 Dart 的命令行应用程序相关的常规日志和诊断信息
 - App Size Tool：分析代码和应用的大小
 
-
-
-
 ## Flutter inspector 工具
 
 ![](./inspector_screenshot.webp)
@@ -44,20 +41,14 @@ tags: Flutter
 
 该选项会为所有的 RenderBox 绘制一层边框，在它们重新绘制时改变颜色。重新绘制时在图层上依次显示不同的颜色。例如，一个小动画可能会导致整个页面一直在重绘。将动画使用RepaintBoundary widget嵌套，可以保证动画只会导致其本身重绘。
 
-
 ### Highlight Oversized Images 高亮尺寸过大的图片
 
 在运行的应用程序中高亮并反转消耗过多内存的图像。
-
-
-
 
 ### 技巧
 
 - 对于loading、toast这种动画UI，使用RepaintBoundary包裹
 - 对于大尺寸的图片，使用cacheHeight、cacheWidth等属性进行优化
-
-
 
 ## 性能视图 (Performance view)
 
@@ -67,9 +58,7 @@ tags: Flutter
 - 时间轴事件跟踪查看器（所有原生 Dart 应用）
 - 高级调试工具（仅 Flutter 应用）
 
-
 ### Flutter 帧图表
-
 
 ### 光栅统计标签页 Raster Stats
 
@@ -87,6 +76,26 @@ tags: Flutter
 
 ![](./timeline-events-tab.webp)
 
+#### 技巧
+
+- 时间线添加更多的信息
+
+```dart
+void main() {
+  debugProfileBuildsEnabled = true;//timeline中会显示具体的widget构建时间
+  debugProfilePaintsEnabled = true;//timeline中会显示具体的绘制时间
+  runApp();
+}
+
+```
+
+- 自定义信息
+
+```dart
+Timeline.startSync("Doing Something");
+doSomething();
+Timeline.finishSync();
+```
 
 ### 增强的追踪选项 Enhance Tracing
 
@@ -100,6 +109,8 @@ tags: Flutter
 
 ![](./track-widget-builds.webp)
 
+通过该视图，分析出哪些widget的build构建的次数异常，进而进行优化
+
 #### 追踪布局 Track Layouts
 
 想要在时间线中查看 RenderObject 布局构建的事件，启用 Track Layouts 选项：
@@ -111,8 +122,6 @@ tags: Flutter
 想要在时间线中查看 RenderObject 的绘制事件，启用 Track Paints 选项：
 
 ![](./track-paints.webp)
-
-
 
 ### 更多调试选项 More debugging options
 
@@ -134,20 +143,13 @@ tags: Flutter
 
 ![](./more-debugging-options.webp)
 
-
-
-
 ## CPU探测视图 CPU profiler
 
-
 单击“Record”开始记录 CPU 剖析。 当完成录制后，单击“Stop”。  此时，CPU 分析数据将从 VM 中提取并显示在分析器视图中（Call tree, Bottom up, Method table, and Flame chart）
-
 
 ### Bottom Up
 
 此表提供了 CPU 配置文件的自下而上表示。 这意味着自下而上表中的每个顶级方法或根实际上是一个或多个 CPU 样本的调用堆栈中的顶级方法。 换句话说，自下而上的表中的每个顶级方法都是自上而下的表（调用树）的叶节点。 在此表中，可以展开方法以显示其调用者。
-
-
 
 #### Total Time
 
@@ -159,17 +161,13 @@ tags: Flutter
 
 自上而下的调用展示
 
-
 ### CPU Flame Chart CPU火焰图
 
 ![](./cpu-flame-chart.webp)
 
 火焰图是一种可视化工具，用于显示方法调用的时间分布。 矩形的宽度表示方法的执行时间。 矩形的颜色表示方法的深度，即方法调用堆栈的深度。上面调用下面的方法。
 
-
-### CPU sampling rate 
-
-
+### CPU sampling rate
 
 ## 内存视图 Memory view
 
@@ -177,19 +175,43 @@ tags: Flutter
 
 ### Root object, retaining path, and reachability
 
-
-
-
 ### Shallow size vs retained size
 
 ### Dart中的内存泄漏
 
-### 技巧
+## 技巧
 
 - 小心闭包函数的使用
 - 小心context的传递。如果闭包的生命周期在widget内，则可以传递
 - 注意widget和state，state中不要引用widget中的context，widget是短生命的，而state是长生命的
 
+Flutter Framework的每一层都提供了函数来输出当前状态或事件到控制台
+
+- debugDumpApp：输出整个应用程序的状态
+- debugDumpRenderTree：输出渲染树，用于分析布局问题
+- debugDumpLayerTree：输出图层树，用于分析compositing问题
+
+- debugPaintSize：设置为true时，每个box外都显示一个亮蓝色边界
+- debugPaintBaselineEnabled： 文本的基线会高亮
+- debugPaintPointersEnabled： 被点击的对象以蓝绿色显示，用于检查hit test是否正确
+- debugPaintLayerBordersEnabled：橙色显示图层边界，用于检查是否需要使用RepaintBoundary
+- debugPaintLayerBordersEnabled - 查看 layer 界线
+
+- debugRepaintRainbowEnabled：每次重绘时，都会有不同的颜色，用于检查重绘区域
+
+- debugProfileBuildsEnabled - 在观测台里显示构建树
+- debugProfilePaintsEnabled
+
+- debugPrintBuildScope：打印buildScope时的信息
+- debugPrintScheduleBuildForStacks：打印调度构建堆栈
+- debugPrintGlobalKeyedWidgetLifecycle：GlobalKey的生命周期信息
+- debugPrintRebuildDirtyWidgets：打印重建的widget
+  - 结合 debugPrintScheduleBuildForStacks，可以观察 widget 的 dirty/clean 生命周期
+  - 结合 debugProfileBuildsEnabled，可以在 DevTools Timeline 中观察到详细事件信息
+- debugPrintMarkNeedsLayoutStacks：打印markNeedsLayout方法调用时的堆栈信息
+- debugPrintMarkNeedsPaintStacks：打印markNeedsPaint方法调用时的堆栈信息
+
+### 添加
 
 ## 参考
 
@@ -200,3 +222,4 @@ tags: Flutter
 - [Mastering Dart & Flutter DevTools — Part 6: CPU Profiler View](https://medium.com/@fluttergems/mastering-dart-flutter-devtools-cpu-profiler-view-part-6-of-8-31e24eae6bf8)
 - [Mastering Dart & Flutter DevTools — Part 7: Memory View](https://medium.com/@fluttergems/mastering-dart-flutter-devtools-part-7-memory-view-e7f5aaf07e15)
 - [Mastering Dart & Flutter DevTools — Part 8: Performance View](https://medium.com/@fluttergems/mastering-dart-flutter-devtools-performance-view-part-8-of-8-4ae762f91230)
+- [Flutter Performance 分析工具简介](https://www.sunmoonblog.com/2020/01/10/flutter-performance-tools/)

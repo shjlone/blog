@@ -358,7 +358,7 @@ class Element {
 ```
 
 - 第1种：Widget节点相同，直接同步slot，并复用现有的Element节点。
-- 第2种：科直接基于新的Widget节点更新，复用并更新现有的Element节点即可。不同的子类不一样的update，比如
+- 第2种：可直接基于新的Widget节点更新，复用并更新现有的Element节点即可。不同的子类不一样的update，比如
 
 ```dart
 class Element {

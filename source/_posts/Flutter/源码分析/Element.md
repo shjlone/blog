@@ -39,6 +39,7 @@ Element的子类：
     - TheatreElement
   - RootRenderObjectElement
 - _NullElement
+- RenderObjectToWidgetElement：element树的根节点
 
 ### 属性
 

@@ -9,16 +9,16 @@
         <meta name="keywords" content="Flutter">
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="相关类 Canvas：封装了Flutter Skia各种绘制指令，比如画线、画圆、画矩形等指令。 Layer：分为容器类和绘制类两种；暂时可以理解为是绘制产物的载体，比如调用 Canvas 的绘制 API 后，相应的绘制产物被保存在 PictureLayer.picture 对象中。 Scene：屏幕上将要要显示的元素。在上屏前，我们需要将Layer中保存的绘制产物关联到 Scene 上。">
+    <meta name="description" content="Flutter框架分析的好文章：  《Flutter框架分析（一）– 总览和Window》 《Flutter框架分析（二）– 初始化》 《Flutter框架分析（三）– Widget，Element和RenderObject》 《Flutter框架分析（四）– Flutter框架的运行》 《Flutter框架分析（五）– 动画》 《Flutter框架分析（六）– 布局》 《Flutter框架分析（">
 <meta property="og:type" content="article">
 <meta property="og:title" content="绘制原理">
 <meta property="og:url" content="http://airshu.github.io/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E7%BB%98%E5%88%B6%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="Airshu&#39;s Blog">
-<meta property="og:description" content="相关类 Canvas：封装了Flutter Skia各种绘制指令，比如画线、画圆、画矩形等指令。 Layer：分为容器类和绘制类两种；暂时可以理解为是绘制产物的载体，比如调用 Canvas 的绘制 API 后，相应的绘制产物被保存在 PictureLayer.picture 对象中。 Scene：屏幕上将要要显示的元素。在上屏前，我们需要将Layer中保存的绘制产物关联到 Scene 上。">
+<meta property="og:description" content="Flutter框架分析的好文章：  《Flutter框架分析（一）– 总览和Window》 《Flutter框架分析（二）– 初始化》 《Flutter框架分析（三）– Widget，Element和RenderObject》 《Flutter框架分析（四）– Flutter框架的运行》 《Flutter框架分析（五）– 动画》 《Flutter框架分析（六）– 布局》 《Flutter框架分析（">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://airshu.github.io/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E7%BB%98%E5%88%B6%E5%8E%9F%E7%90%86/layer_1.png">
-<meta property="article:published_time" content="2022-04-27T08:41:46.521Z">
-<meta property="article:modified_time" content="2022-05-27T23:57:52.718Z">
+<meta property="article:published_time" content="2024-07-21T01:55:46.176Z">
+<meta property="article:modified_time" content="2024-07-21T01:55:46.176Z">
 <meta property="article:author" content="airshu">
 <meta property="article:tag" content="Flutter">
 <meta name="twitter:card" content="summary">
@@ -71,7 +71,7 @@
     
         <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     
-<meta name="generator" content="Hexo 6.0.0"></head>
+<meta name="generator" content="Hexo 6.3.0"></head>
 
 <body>
     <div id="container">
@@ -258,7 +258,7 @@
                             &nbsp;
                             未分类
                         </a>
-                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E4%B8%AD%E7%9A%84%E9%9B%86%E5%90%88/">Android中的集合</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%BB%8F%E9%AA%8C%E8%B0%88/">Android客户端经验谈</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E6%B5%8B%E8%AF%95%E5%AE%9E%E8%B7%B5/">Android测试实践</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%95%B4%E7%90%86/">Android常见问题整理</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E9%9D%A2%E8%AF%95%E9%A2%98%E6%94%B6%E9%9B%86/">Android面试题收集</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/adb%E5%B7%A5%E5%85%B7/">adb工具</a></li>  </ul> 
+                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E4%B8%AD%E7%9A%84%E9%9B%86%E5%90%88/">Android中的集合</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%BB%8F%E9%AA%8C%E8%B0%88/">Android客户端经验谈</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E6%B5%8B%E8%AF%95%E5%AE%9E%E8%B7%B5/">Android测试实践</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%95%B4%E7%90%86/">Android常见问题整理</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/Android%E9%9D%A2%E8%AF%95%E9%A2%98%E6%94%B6%E9%9B%86/">Android面试题收集</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/adb%E5%B7%A5%E5%85%B7/">adb工具</a></li>  <li class="file"><a href="/wiki/Android/%E6%9C%AA%E5%88%86%E7%B1%BB/%E7%8A%B6%E6%80%81%E6%A0%8F%E3%80%81%E6%A0%87%E9%A2%98%E6%A0%8F%E3%80%81%E5%AF%BC%E8%88%AA%E6%A0%8F%E8%AE%BE%E7%BD%AE/">状态栏、标题栏、导航栏设置</a></li>  </ul> 
                     </li>
                     
                     <li class="directory">
@@ -402,7 +402,7 @@
                         </a>
                          <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/%E5%9B%BE%E7%89%87%E7%9B%B8%E5%85%B3/extended_image/">extended_image</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/%E5%9B%BE%E7%89%87%E7%9B%B8%E5%85%B3/flutter_image_compress/">flutter_image_compress</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/%E5%9B%BE%E7%89%87%E7%9B%B8%E5%85%B3/image_cropper/">image_cropper</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/%E5%9B%BE%E7%89%87%E7%9B%B8%E5%85%B3/image%E5%9F%BA%E7%A1%80/">Image基础</a></li>  </ul> 
                     </li>
-                     <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/AspectD/">AspectD</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/GetX/">GetX</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_redux/">flutter_redux</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_bloc/">flutter_bloc</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutterboost/">flutterboost</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/rtw/">rtw</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/%E5%B8%B8%E7%94%A8%E5%BC%80%E6%BA%90%E5%BA%93/">常用开源库</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_sound/">flutter_sound</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_hooks/">flutter_hooks</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/in_app_purchase/">in_app_purchase苹果内购</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/pull_to_refresh/">pull_to_refresh</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/sentry_flutter/">sentry_flutter</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/form_bloc/">form_bloc</a></li>  </ul> 
+                     <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/AspectD/">AspectD</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/GetX/">GetX</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_redux/">flutter_redux</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_bloc/">flutter_bloc</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutterboost/">flutterboost</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/rtw/">rtw</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/%E5%B8%B8%E7%94%A8%E5%BC%80%E6%BA%90%E5%BA%93/">常用开源库</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_sound/">flutter_sound</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_hooks/">flutter_hooks</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/in_app_purchase/">in_app_purchase苹果内购</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/sentry_flutter/">sentry_flutter</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/form_bloc/">form_bloc</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/flutter_easy_refresh/">flutter_easy_refresh</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%BC%80%E6%BA%90%E5%BA%93/syncfusion/">syncfusion</a></li>  </ul> 
                     </li>
                     
                     <li class="directory">
@@ -411,7 +411,7 @@
                             &nbsp;
                             未分类
                         </a>
-                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/Flutter%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%B5%8B/">Flutter静态代码检测</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/build_runner/">build_runner</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%E5%A4%84%E7%90%86/">依赖冲突处理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/Path%E7%9A%84%E4%BD%BF%E7%94%A8/">Path的使用</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E5%9B%BE%E7%89%87%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/">图片内存优化</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E6%89%93%E5%8C%85/">打包</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E6%B2%89%E6%B5%B8%E5%BC%8F%E5%A4%84%E7%90%86/">沉浸式处理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E6%BB%9A%E5%8A%A8%E6%9D%A1/">滚动条</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">版本管理工具fvm</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">生命周期</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/">布局管理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E7%BC%96%E8%AF%91Flutter%E6%BA%90%E7%A0%81/">编译Flutter源码</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E9%80%9A%E8%AE%AF%E5%8E%9F%E7%90%86/">通讯原理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8/">资源使用</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E5%BC%82%E5%B8%B8%E5%88%86%E6%9E%90/">异常分析</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/Flutter%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">Flutter包体积优化</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E4%B8%8EJS%E9%80%9A%E8%AE%AF/">与JS通讯</a></li>  </ul> 
+                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/Flutter%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%A3%80%E6%B5%8B/">Flutter静态代码检测</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/build_runner/">build_runner</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%E5%A4%84%E7%90%86/">依赖冲突处理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/Path%E7%9A%84%E4%BD%BF%E7%94%A8/">Path的使用</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E5%9B%BE%E7%89%87%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/">图片内存优化</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E6%89%93%E5%8C%85/">打包</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E6%B2%89%E6%B5%B8%E5%BC%8F%E5%A4%84%E7%90%86/">沉浸式处理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E6%BB%9A%E5%8A%A8%E6%9D%A1/">滚动条</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7/">版本管理工具fvm</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/">布局管理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E7%BC%96%E8%AF%91Flutter%E6%BA%90%E7%A0%81/">编译Flutter源码</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E9%80%9A%E8%AE%AF%E5%8E%9F%E7%90%86/">通讯原理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8/">资源使用</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E5%BC%82%E5%B8%B8%E5%88%86%E6%9E%90/">异常分析</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/Flutter%E5%8C%85%E4%BD%93%E7%A7%AF%E4%BC%98%E5%8C%96/">Flutter包体积优化</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E4%B8%8EJS%E9%80%9A%E8%AE%AF/">与JS通讯</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/setState%E5%85%B7%E4%BD%93%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88/">setState具体做了什么</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E8%87%AA%E5%AE%9A%E4%B9%89Lint/">自定义Lint</a></li>  </ul> 
                     </li>
                     
                     <li class="directory open">
@@ -420,9 +420,9 @@
                             &nbsp;
                             源码分析
                         </a>
-                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Context/">Context</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Element/">Element</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/InheritedWidget/">InheritedWidget</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/ParentData/">ParentData</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/PaintingContext/">PaintingContext</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/RenderObject/">RenderObject</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/RepaintBoundary/">RepaintBoundary</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/flutter%20Android%E7%AB%AF%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B/">flutter Android端编译流程</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">启动流程分析</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E5%BC%95%E6%93%8E%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B(%E4%B8%80)/">引擎启动流程（一）</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E6%BB%91%E5%8A%A8%E5%8E%9F%E7%90%86/">滑动原理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E7%83%AD%E9%87%8D%E8%BD%BD%E5%8E%9F%E7%90%86/">热重载原理</a></li>  <li class="file active"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E7%BB%98%E5%88%B6%E5%8E%9F%E7%90%86/">绘制原理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E8%B7%AF%E7%94%B1%E7%AE%A1%E7%90%86/">路由管理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Flutter%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E5%8E%9F%E7%90%86/">Flutter事件分发原理</a></li>  </ul> 
+                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Context/">Context</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Element/">Element</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/InheritedWidget/">InheritedWidget</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/ParentData/">ParentData</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/PaintingContext/">PaintingContext</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/RenderObject/">RenderObject</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/RepaintBoundary/">RepaintBoundary</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/flutter%20Android%E7%AB%AF%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B/">flutter Android端编译流程</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">启动流程分析</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E6%BB%91%E5%8A%A8%E5%8E%9F%E7%90%86/">滑动原理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E7%83%AD%E9%87%8D%E8%BD%BD%E5%8E%9F%E7%90%86/">热重载原理</a></li>  <li class="file active"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E7%BB%98%E5%88%B6%E5%8E%9F%E7%90%86/">绘制原理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E8%B7%AF%E7%94%B1%E7%AE%A1%E7%90%86/">路由管理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Flutter%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E5%8E%9F%E7%90%86/">Flutter事件分发原理</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Android%E5%BC%95%E6%93%8E%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">Android引擎启动流程</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Box%E5%B8%83%E5%B1%80%E6%A8%A1%E5%9E%8B/">Box布局模型</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Build%E8%BF%87%E7%A8%8B/">Build过程</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Composition%E8%BF%87%E7%A8%8B/">Composition过程</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Layout%E8%BF%87%E7%A8%8B/">Layout过程</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Paint%E8%BF%87%E7%A8%8B/">Paint过程</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/PipelineOwner/">PipelineOwner</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Sliver%E5%B8%83%E5%B1%80%E6%A8%A1%E5%9E%8B/">Sliver布局模型</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/Widget/">Widget</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E9%A6%96%E5%B8%A7%E6%B8%B2%E6%9F%93/">首帧渲染</a></li>  </ul> 
                     </li>
-                     <li class="file"><a href="/wiki/Flutter/Flutter%E4%BD%93%E7%B3%BB/">Flutter体系</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E5%8A%A8%E7%94%BB/">Flutter动画</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">Flutter命令详解</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E6%8F%92%E4%BB%B6/">Flutter插件</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB/">Flutter学习资源汇总</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84/">Flutter项目结构</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%B7%B7%E5%90%88%E5%BC%80%E5%8F%91/">混合开发</a></li>  <li class="file"><a href="/wiki/Flutter/%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86/">状态管理</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90/">内存分析</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B9%8B%E5%88%86%E5%B8%A7%E6%B8%B2%E6%9F%93/">性能优化之分帧渲染</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/">Flutter代码规范</a></li>  <li class="file"><a href="/wiki/Flutter/DevTools/">DevTools</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E9%A1%B9%E7%9B%AE%E8%89%AF%E5%A5%BD%E7%9A%84%E7%BC%96%E7%A0%81tips/">Flutter项目良好的编码tips</a></li>  </ul> 
+                     <li class="file"><a href="/wiki/Flutter/Flutter%E4%BD%93%E7%B3%BB/">Flutter体系</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E5%8A%A8%E7%94%BB/">Flutter动画</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">Flutter命令详解</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E6%8F%92%E4%BB%B6/">Flutter插件</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB/">Flutter学习资源汇总</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84/">Flutter项目结构</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%B7%B7%E5%90%88%E5%BC%80%E5%8F%91/">混合开发</a></li>  <li class="file"><a href="/wiki/Flutter/%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86/">状态管理</a></li>  <li class="file"><a href="/wiki/Flutter/%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90/">内存分析</a></li>  <li class="file"><a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B9%8B%E5%88%86%E5%B8%A7%E6%B8%B2%E6%9F%93/">性能优化之分帧渲染</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/">Flutter代码规范</a></li>  <li class="file"><a href="/wiki/Flutter/DevTools/">DevTools</a></li>  <li class="file"><a href="/wiki/Flutter/Flutter%E9%A1%B9%E7%9B%AE%E8%89%AF%E5%A5%BD%E7%9A%84%E7%BC%96%E7%A0%81tips/">Flutter项目良好的编码tips</a></li>  <li class="file"><a href="/wiki/Flutter/%E4%B8%80%E4%BA%9BFlutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/">一些Flutter开发技巧</a></li>  </ul> 
                     </li>
                     
                     <li class="directory">
@@ -537,7 +537,7 @@
                         </a>
                          <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/JavaScript/React/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/reactjs%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">React JS源码分析</a></li>  </ul> 
                     </li>
-                     <li class="file"><a href="/wiki/JavaScript/React/props%E5%92%8Cstate%E7%9A%84%E5%8C%BA%E5%88%AB/">props和stat的区别</a></li>  <li class="file"><a href="/wiki/JavaScript/React/redux/">Redux</a></li>  <li class="file"><a href="/wiki/JavaScript/React/%E5%A3%B0%E6%98%8E%E6%96%87%E4%BB%B6%E7%9A%84%E5%86%99%E6%B3%95%E5%92%8C%E5%8C%BA%E5%88%AB/">声明文件的写法的区别</a></li>  </ul> 
+                     <li class="file"><a href="/wiki/JavaScript/React/props%E5%92%8Cstate%E7%9A%84%E5%8C%BA%E5%88%AB/">props和stat的区别</a></li>  <li class="file"><a href="/wiki/JavaScript/React/redux/">Redux</a></li>  <li class="file"><a href="/wiki/JavaScript/React/%E5%A3%B0%E6%98%8E%E6%96%87%E4%BB%B6%E7%9A%84%E5%86%99%E6%B3%95%E5%92%8C%E5%8C%BA%E5%88%AB/">声明文件的写法的区别</a></li>  <li class="file"><a href="/wiki/JavaScript/React/npm%E5%8F%91%E5%B8%83/">npm发布</a></li>  </ul> 
                     </li>
                     
                     <li class="directory">
@@ -562,9 +562,18 @@
                             &nbsp;
                             开源库
                         </a>
-                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%BC%80%E6%BA%90%E5%BA%93/react-native-elements/">react-native-elements</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%BC%80%E6%BA%90%E5%BA%93/RN%E5%B8%B8%E7%94%A8%E7%9A%84%E5%BC%80%E6%BA%90%E5%BA%93/">RN常用的开源库</a></li>  </ul> 
+                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%BC%80%E6%BA%90%E5%BA%93/react-native-elements/">react-native-elements</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%BC%80%E6%BA%90%E5%BA%93/RN%E5%B8%B8%E7%94%A8%E7%9A%84%E5%BC%80%E6%BA%90%E5%BA%93/">RN常用的开源库</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%BC%80%E6%BA%90%E5%BA%93/react-hook-form/">react-native-form</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%BC%80%E6%BA%90%E5%BA%93/react-navigation/">react-navigation</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%BC%80%E6%BA%90%E5%BA%93/react-redux/">react-redux</a></li>  </ul> 
                     </li>
-                     <li class="file"><a href="/wiki/JavaScript/ReactNative/npm/">npm使用</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/Android%E5%8E%9F%E7%94%9FUI%E7%BB%84%E4%BB%B6/">Android原生UI组件</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/Android%E5%8E%9F%E7%94%9F%E6%A8%A1%E5%9D%97/">Android原生模块</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/package.json/">package.json说明</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">基础知识</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E7%83%AD%E6%9B%B4%E6%96%B0/">热更新</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E8%B0%83%E8%AF%95%E6%96%B9%E5%BC%8F/">调试方式</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E9%9B%86%E6%88%90%E5%88%B0%E7%8E%B0%E6%9C%89Android%E5%BA%94%E7%94%A8/">集成到现有Android应用</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84/">项目结构</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%8A%A8%E7%94%BB/">动画</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86/">状态管理</a></li>  </ul> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            源码分析
+                        </a>
+                         <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">启动流程</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E6%B8%B2%E6%9F%93%E5%8E%9F%E7%90%86/">渲染原理</a></li>  </ul> 
+                    </li>
+                     <li class="file"><a href="/wiki/JavaScript/ReactNative/npm/">npm使用</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/Android%E5%8E%9F%E7%94%9FUI%E7%BB%84%E4%BB%B6/">Android原生UI组件</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/Android%E5%8E%9F%E7%94%9F%E6%A8%A1%E5%9D%97/">Android原生模块</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/package.json/">package.json说明</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">基础知识</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E7%83%AD%E6%9B%B4%E6%96%B0/">热更新</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E8%B0%83%E8%AF%95%E6%96%B9%E5%BC%8F/">调试方式</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E9%9B%86%E6%88%90%E5%88%B0%E7%8E%B0%E6%9C%89Android%E5%BA%94%E7%94%A8/">集成到现有Android应用</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84/">项目结构</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%8A%A8%E7%94%BB/">动画</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86/">状态管理</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E5%BC%80%E5%8F%91%E8%80%85%E5%B7%A5%E5%85%B7/">开发者工具</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E6%9C%AC%E5%9C%B0%E9%A1%B9%E7%9B%AE%E4%BE%9D%E8%B5%96/">本地项目依赖</a></li>  <li class="file"><a href="/wiki/JavaScript/ReactNative/%E6%89%8B%E5%8A%BF%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC/">手势事件监听</a></li>  </ul> 
                     </li>
                      <li class="file"><a href="/wiki/JavaScript/JavaScript%E5%85%A5%E9%97%A8/">JavaScript入门</a></li>  <li class="file"><a href="/wiki/JavaScript/TypeScript%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">TypeScript入门</a></li>  <li class="file"><a href="/wiki/JavaScript/ES6/">ES6</a></li>  <li class="file"><a href="/wiki/JavaScript/tsconfig.json/">tsconfig.json</a></li>  <li class="file"><a href="/wiki/JavaScript/%E5%89%8D%E7%AB%AF%E6%A8%A1%E5%9D%97%E5%8C%96%E6%A6%82%E5%BF%B5/">前端模块化概念</a></li>  </ul> 
                     </li>
@@ -881,7 +890,7 @@
                         </a>
                          <ul class="unstyled" id="tree">  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E4%BD%8F/"></a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E5%90%83/"></a></li>  </ul> 
                     </li>
-                     <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E3%80%8A%E5%A4%A7%E6%98%8E%E7%8E%8B%E6%9C%9D1566%E3%80%8B%E7%BB%8F%E5%85%B8%E8%AF%AD%E5%BD%95/">《大明王朝1566》经典语录</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E6%88%90%E9%95%BF/">工程师的成长</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E7%81%AB%E8%BD%A6%E7%A5%A8%E9%BB%84%E7%89%9B/">火车票黄牛</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/">北京游玩攻略</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E5%8D%81%E4%B8%89%E9%99%B5/">北京游玩攻略：十三陵</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E5%A4%A9%E5%9D%9B/">北京游玩攻略：天坛</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E6%81%AD%E7%8E%8B%E5%BA%9C/">北京游玩攻略：恭王府</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E6%95%85%E5%AE%AB/">北京游玩攻略：故宫</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E6%B8%85%E5%8D%8E%E5%8C%97%E5%A4%A7/">北京游玩攻略：清华北大</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E9%95%BF%E5%9F%8E/">北京游玩攻略：长城</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E9%A2%90%E5%92%8C%E5%9B%AD/">北京游玩攻略：颐和园</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/2023-2024%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">2023-2024年度总结</a></li>  </ul> 
+                     <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E3%80%8A%E5%A4%A7%E6%98%8E%E7%8E%8B%E6%9C%9D1566%E3%80%8B%E7%BB%8F%E5%85%B8%E8%AF%AD%E5%BD%95/">《大明王朝1566》经典语录</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E6%88%90%E9%95%BF/">工程师的成长</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E7%81%AB%E8%BD%A6%E7%A5%A8%E9%BB%84%E7%89%9B/">火车票黄牛</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/">北京游玩攻略</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E5%8D%81%E4%B8%89%E9%99%B5/">北京游玩攻略：十三陵</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E5%A4%A9%E5%9D%9B/">北京游玩攻略：天坛</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E6%81%AD%E7%8E%8B%E5%BA%9C/">北京游玩攻略：恭王府</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E6%95%85%E5%AE%AB/">北京游玩攻略：故宫</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E6%B8%85%E5%8D%8E%E5%8C%97%E5%A4%A7/">北京游玩攻略：清华北大</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E9%95%BF%E5%9F%8E/">北京游玩攻略：长城</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E5%8C%97%E4%BA%AC%E6%B8%B8%E7%8E%A9%E6%94%BB%E7%95%A5/%E9%A2%90%E5%92%8C%E5%9B%AD/">北京游玩攻略：颐和园</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/2023-2024%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">2023-2024年度总结</a></li>  <li class="file"><a href="/wiki/%E9%9A%8F%E7%AC%94/%E9%85%92/">酒</a></li>  </ul> 
                     </li>
                      <li class="file"><a href="/wiki/index/">Welcome Shjlone's Blog</a></li>  </ul> 
     </div>
@@ -979,7 +988,7 @@
     <div class="article-date">
         <i class="fa fa-calendar"></i>
         <a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/%E7%BB%98%E5%88%B6%E5%8E%9F%E7%90%86/">
-            <time datetime="2022-04-27T08:41:46.521Z" itemprop="datePublished">2022-04-27</time>
+            <time datetime="2024-07-21T01:55:46.176Z" itemprop="datePublished">2024-07-21</time>
         </a>
     </div>
 
@@ -1015,14 +1024,24 @@
                     <i class="fa fa-angle-double-up fa-2x"></i>
                 </a>
                 <div id="toc-content">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E7%B1%BB"><span class="toc-number">1.</span> <span class="toc-text">相关类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">绘制流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B"><span class="toc-number">2.1.</span> <span class="toc-text">大致流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%BE%E7%BB%86%E6%B5%81%E7%A8%8B"><span class="toc-number">2.2.</span> <span class="toc-text">精细流程</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E7%B1%BB"><span class="toc-number">1.</span> <span class="toc-text">相关类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93%E6%80%BB%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">渲染总流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">绘制流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B"><span class="toc-number">3.1.</span> <span class="toc-text">大致流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%BE%E7%BB%86%E6%B5%81%E7%A8%8B"><span class="toc-number">3.2.</span> <span class="toc-text">精细流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
                 </div>
                 </div>
 
             
         
         
-            <h2 id="相关类"><a href="#相关类" class="headerlink" title="相关类"></a>相关类</h2><ul>
+            <p>Flutter框架分析的好文章：</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://juejin.cn/post/6844903791427321863">《Flutter框架分析（一）– 总览和Window》</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://juejin.cn/post/6844903792006135821">《Flutter框架分析（二）– 初始化》</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://juejin.cn/post/6844903794703073287">《Flutter框架分析（三）– Widget，Element和RenderObject》</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://juejin.cn/post/6844903797387444232">《Flutter框架分析（四）– Flutter框架的运行》</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://juejin.cn/post/6844903842371354637">《Flutter框架分析（五）– 动画》</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://juejin.cn/post/6844903848922841095">《Flutter框架分析（六）– 布局》</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://juejin.cn/post/6844903856623599630">《Flutter框架分析（七）– 绘制》</a></li>
+</ul>
+<h2 id="相关类"><a href="#相关类" class="headerlink" title="相关类"></a>相关类</h2><ul>
 <li>Canvas：封装了Flutter Skia各种绘制指令，比如画线、画圆、画矩形等指令。</li>
 <li>Layer：分为容器类和绘制类两种；暂时可以理解为是绘制产物的载体，比如调用 Canvas 的绘制 API 后，相应的绘制产物被保存在 PictureLayer.picture 对象中。</li>
 <li>Scene：屏幕上将要要显示的元素。在上屏前，我们需要将Layer中保存的绘制产物关联到 Scene 上。</li>
@@ -1032,6 +1051,34 @@
 <li>Container Layer：管理Layers，是唯一可以拥有child layer的Layer；</li>
 <li>非Container Layer：真正用于承载渲染结果的layer，在Layer Tree中属于叶子结点。比如PictureLayer承载的是图片的渲染结果，TextureLayer承载的是纹理的渲染结果；</li>
 </ul>
+<h2 id="渲染总流程"><a href="#渲染总流程" class="headerlink" title="渲染总流程"></a>渲染总流程</h2><ol>
+<li><p>vsync注册：注册一个VSync，用于监听屏幕刷新信号。</p>
+</li>
+<li><p>beginFrame、drawFrame：执行microtasks、执行动画。动画在ticker中添加到_transientCallbacks中</p>
+</li>
+<li><p>Build流程：<br>  SchedulerBinding._handleDrawFrame:</p>
+<ul>
+<li>遍历 _persistentCallbacks，由 WidgetsBinding.addPersistentFrameCallback() 注册，从名字也可以看出，它是一个需要持久回调的列表，所以不可删除，每次绘制过程都会回调</li>
+<li>遍历_postFrameCallbacks，由 WidgetsBinding.addPostFrameCallback() 注册，只会回调一次，调用过后清除回调列表，一般用于监听绘制完成后处理一些任务<br>  WidgetsBinding.drawFrame：</li>
+</ul>
+</li>
+<li><p>Layout流程</p>
+</li>
+</ol>
+<ul>
+<li>performResize() 用于测量大小，子节点需要重写该方法，根据父节点传递的constraints约束计算大小，结果记录在 _size 中。仅当sizedByParent为true时，会触发该方法。</li>
+<li>performLayout() 用于布局，子类需要重写该方法，布局信息存储在当前节点parentData中，后面在绘制阶段会由父节点使用。</li>
+</ul>
+<ol start="5">
+<li>Paint流程</li>
+</ol>
+<ul>
+<li>flushPaint绘制阶段</li>
+<li>RepaintBoudary绘制边界</li>
+</ul>
+<ol start="6">
+<li>Composite流程</li>
+</ol>
 <h2 id="绘制流程"><a href="#绘制流程" class="headerlink" title="绘制流程"></a>绘制流程</h2><h3 id="大致流程"><a href="#大致流程" class="headerlink" title="大致流程"></a>大致流程</h3><ol>
 <li>构建一个 Canvas，用于绘制；同时还需要创建一个绘制指令记录器，因为绘制指令最终是要传递给 Skia 的，而 Canvas 可能会连续发起多条绘制指令，指令记录器用于收集 Canvas 在一段时间内所有的绘制指令，因此Canvas 构造函数第一个参数必须传递一个 PictureRecorder 实例。</li>
 <li>Canvas 绘制完成后，通过 PictureRecorder 获取绘制产物，然后将其保存在 Layer 中。</li>
@@ -1053,6 +1100,15 @@
 <li>在查找的过程中，会将自己到绘制边界点路径上所有节点的_needPaint属性设置为true，表示需要重绘。</li>
 <li>请求新的frame，执行重绘流程。下一个frame就会走drawFrame流程，涉及到flushCompositingBits、flushPaint 和 compositeFrame 三个函数。</li>
 </ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://w4lle.com/2020/11/09/flutter-ui-overview/">Flutter UI 渲染浅析（一）总览</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://w4lle.com/2020/11/11/flutter-ui-vsync/">Flutter UI 渲染浅析（二）VSync 注册</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://w4lle.com/2020/11/13/flutter-ui-animate/">Flutter UI 渲染浅析（三）Animation 原理</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://w4lle.com/2020/11/16/flutter-ui-build/">Flutter UI 渲染浅析（四）Build</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://w4lle.com/2021/01/15/flutter-ui-layout/">Flutter UI 渲染浅析（五）Layout</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://w4lle.com/2021/02/01/flutter-ui-paint/">Flutter UI 渲染浅析（六）Paint</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://w4lle.com/2021/02/02/flutter-ui-composite/">Flutter UI 渲染浅析（七）Composite</a></li>
+</ul>
 
             </div>
         
@@ -1065,19 +1121,19 @@
     
 <nav id="article-nav">
     
-        <a href="/wiki/%E9%9A%8F%E7%AC%94/Car/%E6%B1%BD%E8%BD%A6%E5%8F%91%E5%B1%95%E5%8F%B2%E7%AC%94%E8%AE%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+        <a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
             <strong class="article-nav-caption">Newer</strong>
             <div class="article-nav-title">
                 
-                    汽车发展史笔记
+                    布局管理
                 
             </div>
         </a>
     
     
-        <a href="/wiki/Flutter/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/InheritedWidget/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/wiki/Flutter/%E6%9C%AA%E5%88%86%E7%B1%BB/%E8%87%AA%E5%AE%9A%E4%B9%89Lint/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">Older</strong>
-            <div class="article-nav-title">InheritedWidget</div>
+            <div class="article-nav-title">自定义Lint</div>
         </a>
     
 </nav>

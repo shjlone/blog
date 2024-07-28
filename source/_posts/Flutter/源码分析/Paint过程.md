@@ -11,13 +11,260 @@ tags: Flutter
 经过Build流程，Render Tree中绘制相关的基础信息已经完成更新；经过Layout流程，Render Tree中每个节点的大小和位置完成计算与存储，接下来进入Paint流程：基于Layout的信息生成绘制指令。
 
 
+![](./paint.png)
+
+Render Tree和Layer Tree的对应关系
+
+使用Layer Tree的好处是可以做Paint流程的局部更新。Render Tree中，每个RenderObject对象都拥有一个needsCompositing属性，用于判断自身及子节点是否有一个要去合成的图层，同是还有一个_needsCompositingBitsUpdate字段
+用于标记该属性是否需要更新。Flutter在Paint开始前首先会完成needsCompositing属性的更新，然后开始正式绘制。
+
+![](./layer1.png)
+
+
+
+Layer的子类分为以下几种类型：
+
+- ContainerLayer：容器层，用于包含其他Layer。
+- PictureLayer：执行实际绘制的节点。通过_picture字段持有一个ui.PictureRecorder对象，用于Engine进行对应绘制指令的记录。
+- TextureLayer、PlatformLayer：渲染源将有外部提供
+
+
 ## Compositing-State Mark阶段
+
+
+当Render Tree需要挂载（mount）或卸载（unmount）一个子节点时，就会调用markNeedsCompositingBitsUpdate方法
+
+```dart
+
+class RenderObject {
+   void markNeedsCompositingBitsUpdate() {
+    if (_needsCompositingBitsUpdate) {//已经标记过需要更新
+      return;
+    }
+    _needsCompositingBitsUpdate = true;
+    if (parent is RenderObject) {//处理父节点
+      final RenderObject parent = this.parent! as RenderObject;
+      if (parent._needsCompositingBitsUpdate) {//如果父节点标记过，直接返回
+        return;
+      }
+
+      if ((!_wasRepaintBoundary || !isRepaintBoundary) && !parent.isRepaintBoundary) {//非绘制边界才需要标记父节点
+        parent.markNeedsCompositingBitsUpdate();
+        return;
+      }
+    }
+    if (owner != null) {
+      owner!._nodesNeedingCompositingBitsUpdate.add(this);
+    }
+  }
+}
+
+```
 
 ## Compositing-State Flush阶段
 
+Layout完成之后将调用pipelineOwner.flushCompositingBits()
+
+```dart
+
+class PipelineOwner {
+    void flushCompositingBits() {
+    if (!kReleaseMode) {
+      Timeline.startSync('UPDATING COMPOSITING BITS');
+    }
+    _nodesNeedingCompositingBitsUpdate.sort((RenderObject a, RenderObject b) => a.depth - b.depth);//优先遍历祖先节点
+    for (final RenderObject node in _nodesNeedingCompositingBitsUpdate) {
+      if (node._needsCompositingBitsUpdate && node.owner == this) {
+        node._updateCompositingBits();
+      }
+    }
+    _nodesNeedingCompositingBitsUpdate.clear();
+    for (final PipelineOwner child in _children) {
+      child.flushCompositingBits();
+    }
+    if (!kReleaseMode) {
+      Timeline.finishSync();
+    }
+  }
+}
+
+
+class RenderObject {
+  void _updateCompositingBits() {
+    if (!_needsCompositingBitsUpdate) {//第1步，无更新直接返回
+      return;
+    }
+    final bool oldNeedsCompositing = _needsCompositing;
+    _needsCompositing = false;//默认不需要合成，即单独使用一个图层
+    visitChildren((RenderObject child) {//第2步，遍历每个子节点
+      child._updateCompositingBits();
+      if (child.needsCompositing) {//如果子节点需要合成，则父节点也需要，直到遇到绘制边界
+        _needsCompositing = true;
+      }
+    });
+    if (isRepaintBoundary || alwaysNeedsCompositing) {//第3步，判断是否需要合成，即是否是一个独立图层
+      _needsCompositing = true;
+    }
+    if (!isRepaintBoundary && _wasRepaintBoundary) {//第4步，
+      _needsPaint = false;
+      _needsCompositedLayerUpdate = false;
+      owner?._nodesNeedingPaint.remove(this);
+      _needsCompositingBitsUpdate = false;
+      markNeedsPaint();
+    } else if (oldNeedsCompositing != _needsCompositing) {//判断_needsCompositing是否发生变化
+      _needsCompositingBitsUpdate = false;
+      markNeedsPaint();//图层发生变化，需要重绘
+    } else {
+      _needsCompositingBitsUpdate = false;
+    }
+  }
+}
+
+```
+
+
 ## Paint Mark阶段
 
+Paint和Layout的脏节点标记逻辑比较类似，RenderObject中对绘制有影响的属性更新了就会进行标记，比如RenderImage的image属性
+
+```dart
+  set image(ui.Image? value) {
+    if (value == _image) {//没有改变
+      return;
+    }
+    if (value != null && _image != null && value.isCloneOf(_image!)) {
+      value.dispose();
+      return;
+    }
+    _image?.dispose();
+    _image = value;
+    markNeedsPaint();
+    if (_width == null || _height == null) {
+      markNeedsLayout();
+    }
+  }
+```
+
+
+markNeedsPaint方法的逻辑如下：
+
+```dart
+class RenderObject {
+    void markNeedsPaint() {
+    if (_needsPaint) {
+      return;
+    }
+    _needsPaint = true;
+    if (isRepaintBoundary && _wasRepaintBoundary) {//第一种情况，如果是绘制边界
+      if (owner != null) {
+        owner!._nodesNeedingPaint.add(this);//重新加入到需要绘制的列表中
+        owner!.requestVisualUpdate();//请求渲染
+      }
+    } else if (parent is RenderObject) {//第二种情况，父节点不是绘制边界
+      final RenderObject parent = this.parent! as RenderObject;
+      parent.markNeedsPaint();//父节点也受影响，直接向上标记
+    } else {
+      if (owner != null) {//第三种情况，非RenderObject
+        owner!.requestVisualUpdate();
+      }
+    }
+  }
+}
+
+```
+
 ## Paint Flush阶段
+
+
+当flushCompositingBits完成之后，会调用pipelineOwner.flushPaint()
+
+```dart
+
+class PipelineOwner {
+  void flushPaint() {
+    try {
+      final List<RenderObject> dirtyNodes = _nodesNeedingPaint;
+      _nodesNeedingPaint = <RenderObject>[];
+
+      // Sort the dirty nodes in reverse order (deepest first).
+      for (final RenderObject node in dirtyNodes..sort((RenderObject a, RenderObject b) => b.depth - a.depth)) {//从深到浅遍历
+        if ((node._needsPaint || node._needsCompositedLayerUpdate) && node.owner == this) {
+          if (node._layerHandle.layer!.attached) {
+            if (node._needsPaint) {
+              PaintingContext.repaintCompositedChild(node);
+            } else {
+              PaintingContext.updateLayerProperties(node);
+            }
+          } else {
+            node._skippedPaintingOnLayer();
+          }
+        }
+      }
+      for (final PipelineOwner child in _children) {
+        child.flushPaint();
+      }
+    }
+  }
+}
+
+
+class PaintingContext {
+  static void repaintCompositedChild(RenderObject child, { bool debugAlsoPaintedParent = false }) {
+    _repaintCompositedChild(
+      child,
+      debugAlsoPaintedParent: debugAlsoPaintedParent,
+    );
+  }
+
+  static void _repaintCompositedChild(
+    RenderObject child, {
+    bool debugAlsoPaintedParent = false,
+    PaintingContext? childContext,
+  }) {
+    OffsetLayer? childLayer = child._layerHandle.layer as OffsetLayer?;
+    if (childLayer == null) {
+      final OffsetLayer layer = child.updateCompositedLayer(oldLayer: null);//没有就创建一个OffsetLayer
+      child._layerHandle.layer = childLayer = layer;
+    } else {
+      childLayer.removeAllChildren();//移除子节点
+      final OffsetLayer updatedLayer = child.updateCompositedLayer(oldLayer: childLayer);
+    }
+    child._needsCompositedLayerUpdate = false;
+    childContext ??= PaintingContext(childLayer, child.paintBounds);
+    child._paintWithContext(childContext, Offset.zero);//绘制当前图层
+    childContext.stopRecordingIfNeeded();
+  }
+
+}
+
+
+class RenderObject {
+  void _paintWithContext(PaintingContext context, Offset offset) {
+    if (_needsLayout) {//存在Layout未处理的节点
+      return;
+    }
+    RenderObject? debugLastActivePaint;
+    _needsPaint = false;
+    _needsCompositedLayerUpdate = false;
+    _wasRepaintBoundary = isRepaintBoundary;
+    try {
+      paint(context, offset);//开始绘制，具体的绘制逻辑在子类中
+    } catch (e, stack) {
+      _reportException('paint', e, stack);
+    }
+  }
+}
+
+
+```
+
+
+
+
+
+
+
+
 
 
 PipelineOwner是『RenderObject Tree』与『RendererBinding』间的桥梁，在两者间起到沟通协调的作用
@@ -101,3 +348,9 @@ void markNeedsPaint() {
 
 
 ```
+
+
+
+## 参考
+
+- [Flutter内核源码剖析]()

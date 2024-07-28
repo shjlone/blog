@@ -1,5 +1,5 @@
 ---
-title: Context
+title: BuildContext
 toc: true
 tags: Flutter
 ---

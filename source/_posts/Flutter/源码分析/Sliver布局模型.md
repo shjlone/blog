@@ -454,3 +454,8 @@ class RenderSliverSingleBoxAdapter {
 ![](./sliver6.png)
 
 如图，对完全处于Viewport内的Sliver而言，constraints.scrollOffset为0，子节点的paintOffset为(0,0)。此时子节点从Sliver的左上角开始绘制。
+
+
+## 参考
+
+- [Flutter源码内核剖析]()

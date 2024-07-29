@@ -11,7 +11,7 @@ https://flutter.cn/docs/development/ui/animations
 
 ### Animation
 
-作用：保存动画的差值和状态。整个动画执行过程可以是线性的、曲线的、一个步进函数活着任何其他曲线，由Curve来决定。
+作用：保存动画的差值和状态。整个动画执行过程可以是线性的、曲线的、一个步进函数或者任何其他曲线，由Curve来决定。
 
 - addListener
 
@@ -42,19 +42,19 @@ https://flutter.cn/docs/development/ui/animations
 
 当创建AnimationController时，需要传递一个vsync参数，它接收一个TickerProvider类型。通常我们会将SingleTickerProviderStateMixin添加到State的定义中，然后将State对象作为vsync的值。
 
-SingleTickerProviderStateMixin和TickerProviderStateMixin，这两个类的区别就是是否支持创建多个TickerProvider
+SingleTickerProviderStateMixin和TickerProviderStateMixin，这两个类的区别就是是否支持创建多个TickerProvider，可以使用多个AnimationController。
 
 ### Tween
 
 默认情况下，AnimationController对象值的范围是[0.0，1.0]。如果我们需要构建UI的动画值在不同的范围或不同的数据类型，则可以使用Tween来添加映射以生成不同的范围或数据类型的值。例如，像下面示例，Tween生成[-200.0，0.0]的值
 
-```
+```dart
 final Tween doubleTween = Tween<double>(begin: -200.0, end: 0.0);
 ```
 
 Tween构造函数需要begin和end两个参数。Tween的唯一职责就是定义从输入范围到输出范围的映射。输入范围通常为[0.0，1.0]，但这不是必须的，我们可以自定义需要的范围。Tween继承自Animatable<T>，而不是继承自Animation<T>，Animatable中主要定义动画值的映射规则。
 
-```
+```dart
 final Tween colorTween =
     ColorTween(begin: Colors.transparent, end: Colors.black54);
 
@@ -143,10 +143,63 @@ class _ScaleAnimationRouteState extends State<ScaleAnimationRoute>
 以上写法封装后便是AnimatedBuilder
 
 ```dart
-AnimatedBuilder({
-    child: xx,
-    animation: yy,//绑定Animation
-});
+
+class AnimatedBuilderExample extends StatefulWidget { 
+  @override 
+  _AnimatedBuilderExampleState createState() => _AnimatedBuilderExampleState(); 
+} 
+  
+class _AnimatedBuilderExampleState extends State<AnimatedBuilderExample> 
+    with SingleTickerProviderStateMixin { 
+  late AnimationController _controller; 
+  late Animation<double> _animation; 
+  
+  @override 
+  void initState() { 
+    super.initState(); 
+    _controller = AnimationController( 
+      duration: Duration(seconds: 2), // Animation duration 
+      vsync: this, 
+    ); 
+    // Tween animation 
+    _animation = Tween<double>(begin: 50.0, end: 200.0).animate(_controller);  
+    _controller.forward(); // Start the animation 
+  } 
+  
+  @override 
+  Widget build(BuildContext context) { 
+    return Scaffold( 
+      appBar: AppBar( 
+        title: Text('AnimatedBuilder Demo'), // App bar title 
+      ), 
+      body: Center( 
+        child: AnimatedBuilder( 
+          animation: _controller, 
+          builder: (BuildContext context, Widget? child) { 
+            return Container( 
+              width: _animation.value, // Animate the width 
+              height: _animation.value, // Animate the height 
+              color: Colors.green, // Container background color 
+              child: Center( 
+                child: Text( 
+                  'Hello', 
+                  style: TextStyle(color: Colors.white), // Text color 
+                ), 
+              ), 
+            ); 
+          }, 
+        ), 
+      ), 
+    ); 
+  } 
+  
+  @override 
+  void dispose() { 
+    _controller.dispose(); // Dispose of the animation controller 
+    super.dispose(); 
+  } 
+} 
+
 ```
 
 

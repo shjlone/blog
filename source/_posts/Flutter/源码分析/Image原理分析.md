@@ -506,3 +506,8 @@ class ImageCache {
 
 } 
 ```
+
+
+## 参考
+
+- [Flutter源码内核剖析]()

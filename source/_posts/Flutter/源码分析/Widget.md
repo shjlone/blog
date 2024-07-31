@@ -50,11 +50,25 @@ abstract class Widget extends DiagnosticableTree { //DiagnosticableTree提供调
 
 ```
 
+Widget的特点：
+
+- 声明式UI，描述UI的层级结构、样式、布局过程
+- Widget都是不可变的，对于变化的部分通过Stateful Widget-State的方式实现，也就是我们开发中使用的StatefulWidget，操作逻辑在State中
+
+
 开发过程中，我们会使用`StatelessWidget`和`StatefulWidget`，这两个类都继承自`Widget`。而整个过程就是将Widget树转换成Element树，再转换成RenderObject树，最终通过底层skia绘制。
 
 如果我们绘制的UI也是不可变的，那么我们可以使用`StatelessWidget`，这样在创建的时候绘制一次即可。如果UI需要根据状态发生变化，那么我们可以使用`StatefulWidget`。对于`StatefulWidget`，我们需要实现`State`类，这个类持有`Widget`和`Element`，用来管理`Widget`的状态。
 
 
+
+![](./Widget.png)
+
+Widget大致可以分为3类：
+
+- Component Widget，组合类Widget，通过组合单一的Widget可以获得复杂的Widget
+- Proxy Widget，代理类Widget，本身不涉及Widget内部逻辑，只是为Child Widget提供一些附加的中间功能。比如InheritedWidget用于传递共享信息、ParentDataWidget用于配置布局信息
+- RenderObjectWidget，渲染类Widget，参与Layout、Paint流程，其有对应的RenderObject
 
 ## StatelessWidget
 
@@ -176,17 +190,49 @@ abstract class State<T extends StatefulWidget> with Diagnosticable {
 ![](./Widget子类.png)
 
 
-Widget的子类：
 
-- StatelessWidget、StatefulWidget：组合类Widget
-- ProxyWidget：提供一些附加的功能
-  - ParentDataWidget：布局信息
-  - InheritedWidget：传递共享信息
-- RenderObjectWidget：渲染类Widget，参与layout、paint流程，组合Widget和代理Widget都会映射到Render Widget
-  - LeafRenderObjectWidget
-  - SingleChildRenderObjectWidget
-  - MultiChildRenderObjectWidget
-- RenderObjectToWidgetAdapter：Widget树的根节点
+### ParentDataWidget
+
+
+ParentDataWidget作为 Proxy 型 Widget，其功能主要是为其他 Widget 提供ParentData信息。虽然其 child widget 不一定是 RenderObejctWidget 类型，但其提供的ParentData信息最终都会落地到 RenderObejctWidget 类型子孙 Widget 上。
+
+比如Positioned
+
+```dart
+
+class Positioned extends ParentDataWidget<StackParentData> {
+
+  @override
+  void applyParentData(RenderObject renderObject) {
+    assert(renderObject.parentData is StackParentData);
+    final StackParentData parentData = renderObject.parentData! as StackParentData;
+    bool needsLayout = false;
+
+    if (parentData.left != left) {
+      parentData.left = left;
+      needsLayout = true;
+    }
+
+    if (parentData.top != top) {
+      parentData.top = top;//设置父节点属性
+      needsLayout = true;
+    }
+    ...
+    if (needsLayout) {
+      final RenderObject? targetParent = renderObject.parent;
+      if (targetParent is RenderObject) {
+        targetParent.markNeedsLayout();//标记重新布局
+      }
+    }
+  }
+}
+
+```
+
+
+### InheritedWidget
+
+参考[InheritedWidget](./InheritedWidget.md)
 
 ### RenderObjectWidget
 
@@ -216,3 +262,8 @@ abstract class RenderObjectWidget extends Widget {
 
 ```
 
+RenderObjectWidget的几个子类：LeafRenderObjectWidget、SingleChildRenderObjectWidget、MultiChildRenderObjectWidget只是重写了createElement方法以便返回各自对应的具体的 Element 类实例。
+
+## 参考
+
+- [深入浅出 Flutter Framework 之 Widget](https://zxfcumtcs.github.io/2020/05/01/deepinto-flutter-widget/)

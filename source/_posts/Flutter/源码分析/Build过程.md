@@ -8,10 +8,11 @@ tags: Flutter
 
 ## 概括
 
-1. runApp，初始化构建Widget树，Widget对应Element，创建Element树；
-2. 调用setState方法时，会将对应的element添加到dirtyElement队列中；触发WidgetsBinding中的_handleBuildScheduled方法，下一帧drawFrame会调用buildScope方法；
+1. runApp，初始化构建Widget树，Widget通过createElement创建对应Element树，Element通过createRenderObject创建RenderObject树；
+2. 调用setState方法时，会将对应的element添加到dirtyElement队列中；触发WidgetsBinding中的_handleBuildScheduled方法，下一帧drawFrame会调用BuilderOwner的buildScope方法；
 3. 在buildScope方法中，会对dirtyElement队列中的element进行排序，然后逐个调用rebuild方法，触发对应的生命周期方法，State的didChangeDependencies、build等；
 4. 当Widget从树中移除时，会调用deactivate方法，将对应的element添加到inactiveElement队列中；调用unmount方法
+5. RenderBinding中的drawFrame会触发Layout、Paint流程
 
 ## 相关类
 
@@ -22,7 +23,7 @@ class WidgetsBinding {
 
   //初始化
   void initInstances() {
-    _buildOwner = BuildOwner(onBuildScheduled: _handleBuildScheduled); 管理整个build过程
+    _buildOwner = BuildOwner(onBuildScheduled: _handleBuildScheduled); //管理整个build过程
   }
   
 
@@ -36,14 +37,14 @@ class WidgetsBinding {
 
   /// 每一帧都会调用该方法
   void drawFrame() {
-    buildOwner.buildScope(rootElement);
+    buildOwner.buildScope(rootElement);//走build过程
   }
 }
 
 class RenderObjectToWidgetAdapter {
   attachToRenderTree(RenderObjectToWidgetElement<RenderObjectToWidgetAdapter> element) {
     owner.buildScope(element, (){
-      element!.mount(null, null);
+      element!.mount(null, null);//第一次挂载
     });
   }
 }
@@ -76,9 +77,7 @@ class ComponentElement {
 }
 ```
 
-
 ## 流程分析
-
 
 ### 标脏阶段
 
@@ -89,7 +88,7 @@ class ComponentElement {
 class State {
   void setState(VoidCallback fn) {
     final Object? result = fn() as dynamic;//执行用户的逻辑
-    _element!.markNeedsBuild();
+    _element!.markNeedsBuild();//标记需要build，就是将当前节点添加到脏列表
   }
 }
 
@@ -100,7 +99,6 @@ class Element {
   }
 }
 ```
-
 
 ### BuildOwner
 
@@ -116,10 +114,10 @@ class BuildOwner {
       focusManager = focusManager ?? (FocusManager()..registerGlobalHandlers());
 
   VoidCallback? onBuildScheduled;
-
+//所谓「Inactive Element」，是指 element 从「Element Tree」上被移除到 dispose 或被重新插入「Element Tree」间的一个中间状态。
   final _InactiveElements _inactiveElements = _InactiveElements();
 
-  final List<Element> _dirtyElements = <Element>[];
+  final List<Element> _dirtyElements = <Element>[];//脏列表
   bool _scheduledFlushDirtyElements = false;
 
   bool? _dirtyElementsNeedsResorting;
@@ -159,7 +157,7 @@ class BuildOwner {
 // drawFrame会调用该方法
   @pragma('vm:notify-debugger-on-exception')
   void buildScope(Element context, [ VoidCallback? callback ]) {
-    if (callback == null && _dirtyElements.isEmpty) {//第1步
+    if (callback == null && _dirtyElements.isEmpty) {//第1步，没有脏数据直接返回
       return;
     }
     try {//第2步
@@ -196,7 +194,7 @@ class BuildOwner {
       for (final Element element in _dirtyElements) {
         element._inDirtyList = false;
       }
-      _dirtyElements.clear();
+      _dirtyElements.clear();//清空脏数据
       _scheduledFlushDirtyElements = false;
       _dirtyElementsNeedsResorting = null;
     }
@@ -267,8 +265,6 @@ class BuildOwner {
 
 ```
 
-
-
 ### Flush阶段
 
 我们知道Vsync信号到达后会触发BuildOwner的buildScope方法（参考上面的代码解释），该方法分为以下几个步骤：
@@ -278,14 +274,13 @@ class BuildOwner {
 3. 脏节点排序，优先更新父节点效率更高
 4. 遍历脏节点，执行rebuild方法
 5. 第5步，先将index自增，再检查当前是否满足以下两种情况之一：
-  - dirtyCount < _dirtyElements.length：即在处理Element脏节点的过程中又有新的节点标记为脏
-  - _dirtyElementsNeedsResorting：通常由GlobalKey的复用导致，如果当前节点已经在列表中，则会将该字段设置为true(scheduleBuildFor方法中设置)
+
+- dirtyCount < _dirtyElements.length：即在处理Element脏节点的过程中又有新的节点标记为脏
+- _dirtyElementsNeedsResorting：通常由GlobalKey的复用导致，如果当前节点已经在列表中，则会将该字段设置为true(scheduleBuildFor方法中设置)
 
 满足任何一个都会导致_dirtyElements列表重新排序，然后将index重制到最近的一个非脏节点，并继续从该Element节点的索引进行rebuild方法
 
 6. 将_dirtyElements列表中的每个节点的_inDirtyList字段重置为false，然后清空列表，并重置相关字段
-
-
 
 对于rebuild，会调用performRebuild方法，该方法不同子类不一样的实现
 
@@ -397,7 +392,6 @@ class Element {
 }
 ```
 
-
 ### 清理阶段
 
 在Build流程中，对于执行了deactivate方法的节点，其_lifecycleState字段的属性为inactive，当Build、Layout、Paint、Composition在UI线程的工作结束后，BuildOwner会调用finalizeTree方法进行最后的处理，其会调用_unmountAll
@@ -440,8 +434,6 @@ class Element {
 }
 
 ```
-
-
 
 ## 参考
 

@@ -138,11 +138,15 @@ class RenderObject {
     if (!_needsLayout && constraints == _constraints && relayoutBoundary == _relayoutBoundary) {
       return;
     }
-
+    _constraints = constraints;
     if (_relayoutBoundary != null && relayoutBoundary != _relayoutBoundary) {
       visitChildren(_cleanChildRelayoutBoundary);
     }
     _relayoutBoundary = relayoutBoundary;
+
+    performLayout();
+    markNeedsSemanticsUpdate();
+    markNeedsPaint();
   }
 }
 ```

@@ -18,9 +18,18 @@ Widget是UI元素的配置数据，Element代表屏幕显示元素。主要作�
 - RenderObjectElement：渲染类Element，对应Renderer Widget，是框架最核心的Element。RenderObjectElement主要包括LeafRenderObjectElement，SingleChildRenderObjectElement，和MultiChildRenderObjectElement。
   - LeafRenderObjectElement对应的Widget是LeafRenderObjectWidget，没有子节点；
   - SingleChildRenderObjectElement对应的Widget是SingleChildRenderObjectWidget，有一个子节点；
-  - MultiChildRenderObjectElement对应的Widget是MultiChildRenderObjecWidget，有多个子节点。
+  - MultiChildRenderObjectElement对应的Widget是MultiChildRenderObjecWidget，有多个子节点，这些子节点是Widget对应的Element，当前Element只负责计算布局
 
 ![](element_9.png)
+
+
+- Element 通过 parent、child 指针形成「Element Tree」；
+- Element 持有 Widget、「Render Object」；
+- State 是绑定在 Element 上的，而不是绑在「Stateful Widget」上(这点很重要)。
+
+> 上述这些关系并不是所有类型的 Element 都有，如：「Render Object」只有「RenderObject Element」才有，State 只有「Stateful Element」才有。
+
+
 
 ## 重要属性和方法
 
@@ -224,16 +233,11 @@ update方法会通知关联对象Widget有更新。不同子类的notifyClients�
   @override
   void update(covariant RenderObjectWidget newWidget) {
     super.update(newWidget);
-    assert(widget == newWidget);
-    assert(() {
-      _debugUpdateRenderObjectOwner();
-      return true;
-    }());
     _performRebuild(); // calls widget.updateRenderObject()
   }
 
   void _performRebuild() {
-    widget.updateRenderObject(this, renderObject);
+    widget.updateRenderObject(this, renderObject);//修改RenderObject的属性
     _dirty = false;
   }
 ```
@@ -244,7 +248,6 @@ update方法会通知关联对象Widget有更新。不同子类的notifyClients�
   @override
   void update(SingleChildRenderObjectWidget newWidget) {
     super.update(newWidget);
-    assert(widget == newWidget);
     _child = updateChild(_child, widget.child, null);
   }
 
@@ -355,14 +358,17 @@ void mount(Element parent, dynamic newSlot) {
 #### MultiChildRenderObjectElement
 
 ```dart
-void mount(Element parent, dynamic newSlot) {
-  super.mount(parent, newSlot);
-  _children = List<Element>(widget.children.length);
-  Element previousChild;
-  for (int i = 0; i < _children.length; i += 1) {
-    final Element newChild = inflateWidget(widget.children[i], previousChild);
-    _children[i] = newChild;
-    previousChild = newChild;
+class MultiChildRenderObjectElement {
+
+  void mount(Element parent, dynamic newSlot) {
+    super.mount(parent, newSlot);
+    _children = List<Element>(widget.children.length);
+    Element previousChild;
+    for (int i = 0; i < _children.length; i += 1) {
+      final Element newChild = inflateWidget(widget.children[i], previousChild);//将Widget转换成Element
+      _children[i] = newChild;
+      previousChild = newChild;
+    }
   }
 }
 ```

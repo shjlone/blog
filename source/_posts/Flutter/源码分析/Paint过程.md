@@ -37,7 +37,7 @@ Layer的子类分为以下几种类型：
 ```dart
 
 class RenderObject {
-   void markNeedsCompositingBitsUpdate() {
+  void markNeedsCompositingBitsUpdate() {
     if (_needsCompositingBitsUpdate) {//已经标记过需要更新
       return;
     }

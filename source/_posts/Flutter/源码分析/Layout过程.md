@@ -6,6 +6,23 @@ tags: Flutter
 
 
 
+
+```dart
+class RenderBinding {
+  void drawFrame() {
+    pipelineOwner.flushLayout();//布局
+    pipelineOwner.flushCompositingBits();//更新所有节点，计算待绘制区域数据
+    pipelineOwner.flushPaint();//绘制
+    if (sendFramesToEngine) {
+      renderView.compositeFrame(); // 发送数据到GPU线程
+      pipelineOwner.flushSemantics(); // 更新语义化
+      _firstFrameSent = true;
+    }
+  }
+}
+
+```
+
 ## 过程
 
 
@@ -108,6 +125,8 @@ class RenderObject {
 ```
 
 
+_nodesNeedingLayout是需要重新构建的列表，存储所有需要重新布局的节点，一般会通过markNeedsLayout将自己添加到待重新layout列表中。
+
 总结：
 
 drawFrame-->flushLayout-->performLayout-->markNeedsPaint
@@ -128,7 +147,7 @@ class RenderView {
 }
 
 class RenderObject {
-    void layout(Constraints constraints, { bool parentUsesSize = false }) {
+  void layout(Constraints constraints, { bool parentUsesSize = false }) {
     if (!kReleaseMode && debugProfileLayoutsEnabled) {
       Map<String, String>? debugTimelineArguments;
     }
@@ -166,6 +185,7 @@ class RenderObject {
 
 ```
 
+为了性能考虑，layout过程会使用_relayoutBoundary来优化性能。
 
 
 

@@ -4,7 +4,8 @@ toc: true
 tags: Flutter
 ---
 
-如果使用恰当，RepaintBoundary能有效提升性能。
+
+UI系统会进行界面的图层划分，可以进行图层复用，减少绘制量，提升绘制性能。而RepaintBoundary是开放给开发者使用的独立图层。
 
 RenderObject有一个isRepaintBoundary属性，该属性决定这个RenderObject重绘时是否独立于其父元素，如果该属性为true，则独立绘制。
 

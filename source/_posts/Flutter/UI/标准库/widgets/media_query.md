@@ -60,7 +60,56 @@ orientation | 是横屏还是竖屏。
 
 ## 优化技巧
 
-如果代码中直接使用MediaQuery.of(context)，则因为InheritedWidget的机制，会造成不必要的rebuild，推荐使用MediaQuery.xxxOf(context)
+如果代码中直接使用MediaQuery.of(context)，则因为InheritedWidget的机制，会造成不必要的rebuild，推荐使用MediaQuery.xxxOf(context)。
+
+为什么xxxOf可以减少刷新频率呢？
+
+```dart
+
+class InheritedModel {
+  static T? inheritFrom<T extends InheritedModel<Object>>(BuildContext context, { Object? aspect }) {
+    //参数为空，使用旧的方式
+    if (aspect == null) {
+      return context.dependOnInheritedWidgetOfExactType<T>();
+    }
+    final List<InheritedElement> models = <InheritedElement>[];
+    _findModels<T>(context, aspect, models);
+    if (models.isEmpty) {
+      return null;
+    }
+
+    final InheritedElement lastModel = models.last;
+    for (final InheritedElement model in models) {
+      final T value = context.dependOnInheritedElement(model, aspect: aspect) as T;
+      if (model == lastModel) {
+        return value;//获取MediaQuery
+      }
+    }
+    return null;
+  }
+}
+
+class MediaQuery extends InheritedModel<_MediaQueryAspect> {
+
+/// 当InheritedWidget发生变化时，会调用此方法，判断是否需要刷新
+@override
+  bool updateShouldNotifyDependent(MediaQuery oldWidget, Set<Object> dependencies) {
+    for (final Object dependency in dependencies) {
+      if (dependency is _MediaQueryAspect) {
+        switch (dependency) {
+          case _MediaQueryAspect.size:
+            if (data.size != oldWidget.data.size) {
+              return true;
+            }
+          ...
+        }
+      }
+    }
+    return false;
+  }
+}
+
+```
 
 ## 参考
 

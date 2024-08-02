@@ -202,6 +202,7 @@ Flutter Framework的每一层都提供了函数来输出当前状态或事件到
 - debugProfileBuildsEnabled - 在观测台里显示构建树
 - debugProfilePaintsEnabled
 
+- debugPrintLayouts：打印flushLayout的节点
 - debugPrintBuildScope：打印buildScope时的信息
 - debugPrintScheduleBuildForStacks：打印调度构建堆栈
 - debugPrintGlobalKeyedWidgetLifecycle：GlobalKey的生命周期信息

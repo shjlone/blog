@@ -4,6 +4,7 @@ toc: true
 tags: Flutter
 ---
 
+
 ## Widget
 
 Flutter中的一切都是Widget。关于Flutter的UI绘制原理可以参考[纷争再起：Flutter-UI绘制解析](https://juejin.cn/post/6844903794627575822)。
@@ -41,7 +42,7 @@ abstract class Widget extends DiagnosticableTree {
 
    Element createElement();//每个Widget对应一个Element
 
-   /// 是否需要更新，根据runtimeType和key来判断
+   /// 是否需要更新，根据runtimeType和key来判断,新旧Widget相同就只需要更新数据
    static bool canUpdate(Widget oldWidget, Widget newWidget) {
     return oldWidget.runtimeType == newWidget.runtimeType
         && oldWidget.key == newWidget.key;

@@ -10,8 +10,6 @@ tags:
 
 ### 按键或触摸事件在特定时间内无响应
 
-
-
 ```java
 //ActivityTaskManagerService.java
 
@@ -31,7 +29,6 @@ static final int BROADCAST_BG_TIMEOUT = 60*1000;
 
 前台广播超时时间是 10s，后台广播超时是 60s，这类超时没有提示框弹出。
 
-
 ### Service超时
 
 ```java
@@ -45,10 +42,7 @@ static final int SERVICE_BACKGROUND_TIMEOUT = SERVICE_TIMEOUT * 10;
 
 ```
 
-
 当发生ANR时，会将相应信息记录到/data/anr/traces.txt
-
-
 
 ## 降低ANR的一些技巧
 
@@ -56,13 +50,8 @@ static final int SERVICE_BACKGROUND_TIMEOUT = SERVICE_TIMEOUT * 10;
 - onCreate 和 onResume 回调中尽量避免耗时的代码
 - View 的 onOnTouchevent 和 onclick 中避免耗时的代码
 
-
-
 AMS系统时间调节原理
-
 
 程序等待原理分析
 
-
 ## 参考
-

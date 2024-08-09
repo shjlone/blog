@@ -6,13 +6,13 @@ toc: true
 
 
 
-Binder是一个工作在Linux层面的驱动，这 一段驱动运行在内核态。Binder本身又是一种架构，这种架构提供了服务端、Binder驱动和客户端三个模块。
+Binder是一个工作在Linux层面的驱动，这一段驱动运行在内核态。Binder本身又是一种架构，这种架构提供了服务端、Binder驱动和客户端三个模块。
 
 ![](./aidl_1.png)
 
 ## 服务端
 
-Binder服务端实际上就是一个Binder类的对象，当我们创建一个Binder对象的时候，Binder内部就 会启动一个隐藏线程，该线程的主要作用就是接收Binder驱动发送
+Binder服务端实际上就是一个Binder类的对象，当我们创建一个Binder对象的时候，Binder内部就会启动一个隐藏线程，该线程的主要作用就是接收Binder驱动发送
 来的消息，那么Binder驱动为 什么会给Binder服务端的线程发送消息呢?原因很简单，我们在客户端调用服务端的时候并不能直接调用服务端相应的类和方法，
 只能通过Binder驱动来调用。当服务端的隐藏线程收到Binder 驱动发来的消息之后，就会回调服务端的onTransact方法，我们来看看这个方法的方法头:
 
@@ -57,7 +57,6 @@ public class MyService extends Service {
 }
 ```
 
-
 ## Binder驱动
 
 Binder驱动是Binder服务端和Binder客户端之间连接的一个桥梁，当一个服务端Binder被创建出来的时候，系统同时会在Binder驱动中创建另外一个Binder对象，
@@ -77,7 +76,6 @@ Binder驱动是Binder服务端和Binder客户端之间连接的一个桥梁，�
    
    }, Service.BIND_AUTO_CREATE);                
 ```
-
 
 ## 客户端
 

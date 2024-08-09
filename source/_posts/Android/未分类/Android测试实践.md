@@ -67,5 +67,3 @@ Android SDK测试框架
 - [https://www.jianshu.com/p/6c23f2681105](https://www.jianshu.com/p/6c23f2681105)
 
 ## Espresso
-
-

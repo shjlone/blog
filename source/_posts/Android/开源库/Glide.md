@@ -10,7 +10,6 @@ toc: true
 
 ## 注意点
 
-
 ### 占位符
 
 ```java
@@ -25,13 +24,13 @@ Glide.with(this)
 
 ### **缓存等级**
 
-#### 活动缓存：
+#### 活动缓存
 
-#### 内存缓存：
-    
+#### 内存缓存
+
 默认开启，可以通过skipMemoryCache(true)关闭内存缓存。
   
-#### 磁盘缓存：
+#### 磁盘缓存
 
 InternalCacheDiskCacheFactory（默认）
 
@@ -55,14 +54,11 @@ submit()方法其实就是对应的 Glide 3 中的 downloadOnly()方法，和 pr
 不过 submit()方法的用法明显要 比 preload()方法复杂不少。这个方法只会下载图片，而不会对图片进行加载。当 图片下载完成之后，
 我们可以得到图片的存储路径，以便后续进行操作。
 
-
-
 ## 重要知识点
 
 - 通过attach一个Fragment来监听Context的生命周期，合理的管理图片的加载和释放。
 - Glide默认采用的是RGB-565，相比ARGB-8888内存占用会减小一半。
 - 会根据ImageView的尺寸来缓存图片。
-
 
 ## 常用配置
 

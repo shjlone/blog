@@ -7,8 +7,7 @@ toc: true
 ## 由来
 
 我们在做带UI的软件时，一般的做法是先创建一个窗口，然后在窗口上添加各种Button、Text、List等其他UI控件。Android、iOS也是类似，但代码的设计上跟PC端
-有些差别，Android使用Activity来管理UI、iOS使用ViewController。一般软件的入口都是main函数开始，Android中则通过描述文件[AndroidManifest.xml](./AndroidManifest.html)配置
-一个Activity的属性作为入口。用户操作手机的时候使得一个界面可能处于`可视`状态，也可能处理`隐藏`状态，对应着Activity会有自己的生命周期。不同UI的嵌套
+有些差别，Android使用Activity来管理UI、iOS使用ViewController。一般软件的入口都是main函数开始，Android中则通过描述文件[AndroidManifest.xml](./AndroidManifest.html)配置一个Activity的属性作为入口。用户操作手机的时候使得一个界面可能处于`可视`状态，也可能处理`隐藏`状态，对应着Activity会有自己的生命周期。不同UI的嵌套
 也是需要维护的，所以就有了Activity`任务栈`，对应着不同Activity有不同的`启动模式`。不同的Activity之间又可能需要数据传递，因而有了[Intent](./Intent.html)。
 
 
@@ -74,7 +73,7 @@ toc: true
 2021-06-02 21:03:26.663 30945-30945/com.lqd.androidpractice D/LaunchActivity2: onResume
 ```
 
-在Activity2中点击返回键，当一个后台Activity会到前台时，会执行onRestart->onResume->onDestroy。当回到桌面，再次进入的应用的时候也是此流程
+在Activity2中点击返回键，当一个后台Activity回到前台时，会执行onRestart->onResume->onDestroy。当回到桌面，再次进入的应用的时候也是此流程
 
 ```java
 2021-06-02 21:06:54.500 30945-30945/com.lqd.androidpractice D/LaunchActivity2: onPause
@@ -133,7 +132,7 @@ bundle对象会被传递给onCreate和onRestoreInstanceState方法，我们就�
 通过此方法的参数我们可以取出当前请求的信息。需要注意的是，这个Activity的onCreate、onStart不会被系统调用，因为它并没有发生改变。
 如果新Activity的实例已存在但不是位于栈顶，那么新Activity仍然会重新重建。举个例子，假设目前栈内的情况为ABCD，其中ABCD为四个Activity，
 A位于栈底，D位于栈顶，这个时候假设要再次启动D，如果D的启动模式为singleTop，那么栈内的情况仍然为ABCD;如果D的启动模式为standard，
-那么由于D 被重新创建，导致栈内的情况就变为ABCDD。
+那么由于D被重新创建，导致栈内的情况就变为ABCDD。
 
 #### singleTask
 
@@ -151,7 +150,7 @@ A位于栈底，D位于栈顶，这个时候假设要再次启动D，如果D的�
 #### singleInstance
 
 单实例模式。这是一种加强的singleTask模式，它除了具有singleTask模式的所有特性外，还加强了一点，那就是具有此种模式的Activity只能单独地位于一个任务栈中，
-换句话说，比 如Activity A是singleInstance模式，当A启动后，系统会为它创建一个新的任务栈，然后A独自在这个新的任务栈中，由于栈内复用的特性，
+换句话说，比如Activity A是singleInstance模式，当A启动后，系统会为它创建一个新的任务栈，然后A独自在这个新的任务栈中，由于栈内复用的特性，
 后续的请求均不会创建新的Activity，除非这个独特的任务栈被系统销毁了。"来电显示"界面就可以使用该模式。
 
 

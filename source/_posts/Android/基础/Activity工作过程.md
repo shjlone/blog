@@ -10,9 +10,7 @@ toc: true
 Activity是一种展示型组件，具有两种启动方式，一种是显示的，通过intent实现；另一种是隐式的，也需要intent，但还需要在AndroidManifest.xml
 中添加intentfilter。在实现Activity时，需要继承Activity抽象类，并且重写onCreat()方法，因此，Activity具有启动和停止的概念。
 
-
 ## 流程分析
-
 
 ### 流程图
 
@@ -562,7 +560,6 @@ public void schedule() throws RemoteException {
 }
 ```
 
-
 IApplicationThread是ApplicationThread在系统进程的代理，所以真正执行的地方是客户端的ApplicationThread。
 
 现有流程如下：
@@ -747,7 +744,6 @@ TransactionExecutor创建是在ActivityThread中,所以，client.handleLaunchAct
 
 ### Activity初始化及生命周期函数回调
 
-
 ```java
 ActivityThread.java
 
@@ -872,15 +868,13 @@ private Activity performLaunchActivity(ActivityClientRecord r, Intent customInte
 
 其他生命周期处理也是类似的，先在ActivityStackSupervisor中添加对应的XXXActivityItem，然后在ActivityThread中的handleXXXActivity处理。
 
-
 ## 总结归纳
 
-### 整体流程图如下：
+### 整体流程图如下
 
 ![](./activity_process_3.jpg)
 
-
-### 一些类的介绍：
+### 一些类的介绍
 
 类名 | 作用
 --- | ---
@@ -896,7 +890,6 @@ ActivityStackSupervisor|负责所有Activity栈的管理。AMS的stack管理主�
 ClientLifecycleManager|客户端生命周期执行请求管理
 ClientTransaction|是包含一系列的 待客户端处理的事务 的容器，客户端接收后取出事务并执行
 LaunchActivityItem、ResumeActivityItem|继承ClientTransactionItem，客户端要执行的事务信息，启动activity
-
 
 ## 参考
 

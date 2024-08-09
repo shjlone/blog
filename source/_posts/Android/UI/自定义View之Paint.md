@@ -13,7 +13,7 @@ tags: Android
 
 ## API
 
-### 颜色设置 
+### 颜色设置
 
 ```java
 
@@ -78,14 +78,12 @@ PorterDuff.Mode 是用来指定两个图像共同绘制时的颜色策略的。�
 
 [https://developer.android.com/reference/android/graphics/PorterDuff.Mode.html](https://developer.android.com/reference/android/graphics/PorterDuff.Mode.html)
 
-
-
 ### 颜色滤镜
 
 - ColorFilter
-    - LightingColorFilter
-    - PorterDuffColorFilter
-    - ColorMatrixColorFilter
+  - LightingColorFilter
+  - PorterDuffColorFilter
+  - ColorMatrixColorFilter
 
 ```java
 
@@ -99,8 +97,6 @@ paint.setColorFilter(lightingColorFilter);
 ```
 
 ### setXfermode
-
-
 
 ```java
 
@@ -170,11 +166,9 @@ canvas.drawCircle(650, 125, 100, paint);
 
 ![](./2.jpg)
 
-
 ### setStrokeMiter
 
 这个方法是对于 setStrokeJoin() 的一个补充，它用于设置 MITER 型拐角的延长线的最大值。
-
 
 ### 色彩优化
 
@@ -190,11 +184,9 @@ setFilterBitmap(boolean filter)
 
 ```
 
-
 ### setPathEffect
 
 使用 PathEffect 来给图形的轮廓设置效果。对 Canvas 所有的图形绘制有效，也就是 drawLine() drawCircle() drawPath() 这些方法。
-
 
 ### CornerPathEffect
 
@@ -219,9 +211,7 @@ paint.setPathEffect(pathEffect);
 canvas.drawPath(path, paint);
 ```
 
-
 ### 绘制虚线
-
 
 ```java
 
@@ -241,7 +231,6 @@ canvas.drawPath(path, paint);
 
 ```
 
-
 ### SumPathEffect
 
 ```java
@@ -254,7 +243,6 @@ canvas.drawPath(path, paint);
 ```
 
 ### ComposePathEffect
-
 
 ### setShadowLayer
 
@@ -288,7 +276,6 @@ canvas.drawBitmap(bitmap, 100, 100, paint);
 
 设置字体
 
-
 #### setFakeBoldText
 
 是否使用伪粗体
@@ -296,7 +283,6 @@ canvas.drawBitmap(bitmap, 100, 100, paint);
 #### setStrikeThruText
 
 是否加删除线
-
 
 #### setUnderlineText
 
@@ -325,11 +311,9 @@ canvas.drawText("Hello HenCoder", 100, 150, paint);
 
 ```
 
-
 #### setTextAlign
 
 设置文字的对齐方式。一共有三个值：LEFT CETNER 和 RIGHT。默认值为 LEFT。
-
 
 #### setTextLocale
 
@@ -351,7 +335,6 @@ canvas.drawText("Hello HenCoder", 100, 150, paint);
 
 测量文字的宽度并返回
 
-
 #### getTextWidths
 
 getTextWidths(String text, float[] widths)
@@ -361,7 +344,6 @@ getTextWidths(String text, float[] widths)
 #### breakText
 
 也是用来测量文字宽度的。但和 measureText() 的区别是， breakText() 是在给出宽度上限的前提下测量文字的宽度。如果文字的宽度超出了上限，那么在临近超限的位置截断文字。
-
 
 ### 光标相关
 
@@ -391,7 +373,6 @@ getOffsetForAdvance(CharSequence text, int start, int end, int contextStart, int
 ```
 
 ## 参考
-
 
 - [https://rengwuxian.com/ui-1-2/](https://rengwuxian.com/ui-1-2/)
 - [https://rengwuxian.com/ui-1-3/](https://rengwuxian.com/ui-1-3/)

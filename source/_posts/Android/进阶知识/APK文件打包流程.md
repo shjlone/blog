@@ -24,8 +24,6 @@ APK文件的结构
   - resources.arsc
   - AndroidManifest.xml
 
-
-
 ## 一、资源打包
 
 使用aapt来打包res资源文件，生成R.java、resources.arsc和res文件（二进制 & 非二进制如res/raw和pic保持原样）
@@ -40,22 +38,24 @@ res目录有9种目录
 - menu。这类资源以XML文件保存在res/menu目录下，用来描述应用程序菜单。
 - raw。这类资源以任意格式的文件保存在res/raw目录下，它们和assets类资源一样，都是原装不动地打包在apk文件中的，不过它们会被赋予资源ID，这样我们就可以在程序中通过ID来访问它们。例如，假设在res/raw目录下有一个名称为filename的文件，并且它在编译的过程，被赋予的资源ID为R.raw.filename，那么就可以使用以下代码来访问它：
 
-    ```java
-    Resources res = getResources();  
-    InputStream is = res.openRawResource(R.raw.filename);  
-    ```
+```java
+Resources res = getResources();  
+InputStream is = res.openRawResource(R.raw.filename);  
+```
 
 - values。这类资源以XML文件保存在res/values目录下，用来描述一些简单值，例如，数组、颜色、尺寸、字符串和样式值等，一般来说，这六种不同的值分别保存在名称为arrays.xml、colors.xml、dimens.xml、strings.xml和styles.xml文件中。
 - xml。这类资源以XML文件保存在res/xml目录下，一般就是用来描述应用程序的配置信息。
-toc
-### R.java 
 
-    public final class R {
-        public static final class layout {
-            public static int xxx = 0xxxxxx;
-        }
-        ...
+### R.java
+
+```java
+public final class R {
+    public static final class layout {
+        public static int xxx = 0xxxxxx;
     }
+    ...
+}
+```
 
 ### resources.arsc
 
@@ -68,20 +68,21 @@ toc
 
 **aapt命令**
 
-    /e/Android/sdk/build-tools/28.0.2/aapt.exe package -f -M src/main/AndroidManifest.xml -I "/e/Android/sdk/platforms/android-28/android.jar" -S src/main/res -J gen -m
+```shell
+/e/Android/sdk/build-tools/28.0.2/aapt.exe package -f -M src/main/AndroidManifest.xml -I "/e/Android/sdk/platforms/android-28/android.jar" -S src/main/res -J gen -m
 
-    -f 如果编译出来的文件已经存在，强制覆盖。
-    -m 使生成的包的目录放在-J参数指定的目录。
-    -J 指定生成的R.java的输出目录
-    -S res文件夹路径
-    -A assert文件夹的路径
-    -M AndroidManifest.xml的路径
-    -I 某个版本平台的android.jar的路径
-    -F 具体指定apk文件的输出
+```
 
+**命令参数：**
 
-
-
+-f 如果编译出来的文件已经存在，强制覆盖。
+-m 使生成的包的目录放在-J参数指定的目录。
+-J 指定生成的R.java的输出目录
+-S res文件夹路径
+-A assert文件夹的路径
+-M AndroidManifest.xml的路径
+-I 某个版本平台的android.jar的路径
+-F 具体指定apk文件的输出
 
 ## 二、aidl阶段
 
@@ -104,7 +105,6 @@ toc
 **dx命令**
 
     dx --dex --output=gen/classes.dex gen/out/java/com/test/
-     
 
 ## 五、apkbuilder阶段
 
@@ -113,9 +113,11 @@ toc
 **注意：**
 
 res/raw和assets的相同点：
+
 1. 两者目录下的文件在打包后会原封不动的保存在apk包中，不会被编译成二进制。
 
 res/raw和assets的不同点：
+
 1. res/raw中的文件会被映射到R.java文件中，访问的时候直接使用资源ID即R.id.filename；assets文件夹下的文件不会被映射到R.java中，访问的时候需要AssetManager类。
 2. res/raw不可以有目录结构，而assets则可以有目录结构，也就是assets目录下可以再建立文件夹
 
@@ -158,7 +160,6 @@ V2签名:
     //检查签名
     apksigner verify app.apk
 
-
 ## 七、zipalign阶段
 
 对apk中未压缩的数据进行4字节对齐，对齐后就可以使用mmap函数读取文件，可以像读取内存一样对普通文件进行操作。如果没有4字节对齐，就必须显式的读取，这样比较缓慢并且会耗费额外的内存。
@@ -166,6 +167,3 @@ V2签名:
 **zipalign**
 
     zipalign 4 package/res.apk package/app-unsigned-aligned.apk
-
-
-

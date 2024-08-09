@@ -4,6 +4,17 @@ toc: true
 tags: Flutter
 ---
 
+
+
+- Flutter的基本控件是如何绘制的？比如Text、Image、Button
+- Flutter是如何实现弹窗的？
+- Flutter是如何实现动画的？
+- Flutter是如何实现滚动的？
+- Flutter的路由跳转是如何实现的？
+- Flutter是如何跟原生通信的？
+- Flutter是如何实现手势事件传递的？
+
+
 ## 概述
 
 ![](./11_flutter_arch.png)

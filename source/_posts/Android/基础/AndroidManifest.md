@@ -3,7 +3,7 @@ title: AndroidManifest描述文件
 toc: true
 ---
 
-```
+```xml
 <?xml version="1.0" encoding="uft-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/red/android"
                package="com.example.android"
@@ -11,7 +11,7 @@ toc: true
                android:versionName="1.0">
     <uses-permission />
     <permission />
-    <permission-tree />                                                      权限配置
+    <permission-tree />                                                      //权限配置
     <permission-group />
 
     <instrumentation android:functionalTest=["true" | "false"]
@@ -22,12 +22,12 @@ toc: true
         android:targetPackage="string" />
      <uses-sdk />
      <uses-configuration /> 
-     <uses-feature />                                                         环境配置
+     <uses-feature />                                                         //环境配置
      <supports-screens /> 
      <compatible-screens /> 
      <supports-gl-texture /> 
 
-      应用基本配置
+      //应用基本配置
      <application android:allowTaskReparenting=["true" | "false"]
                  android:allowBackup=["true" | "false"]
                  android:backupAgent="string"
@@ -112,13 +112,13 @@ toc: true
           </activity-alias>
           <service>
                  <intent-filter> . . . </intent-filter>
-                 <meta-data/>                                                  服务组件配置
+                 <meta-data/>                                                  //服务组件配置
           </service>
           <receiver>
-                 <intent-filter> . . . </intent-filter>                              触发器组件配置
+                 <intent-filter> . . . </intent-filter>                              //触发器组件配置
                  <meta-data />
           </receiver>
-          数据源组件配置
+          //数据源组件配置
 
 
 
@@ -139,7 +139,7 @@ toc: true
     . . .
     </provider>
 -------------------------------------------------------------------------------------------------------------------------------------------
-    <uses-library />                依赖库配置
+    <uses-library />                //依赖库配置
 -------------------------------------------------------------------------------------------------------------------------------------------
     </application>
 </manifest>
@@ -275,3 +275,9 @@ android:name|
 ----|----
 android:name|指定类库的名称
 android:required|是否一定要找个库，true的时候，如果机器上没有这个库则不能安装
+
+
+
+## 参考
+
+- [https://developer.android.com/guide/topics/manifest](https://developer.android.com/guide/topics/manifest)

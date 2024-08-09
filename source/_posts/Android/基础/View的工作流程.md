@@ -7,7 +7,6 @@ toc: true
 DecorView是视图的顶级View，我们添加的布局文件是它的一个子布局，而ViewRootImpl则负责渲染视图，它调用了一个performTraveals方法使得ViewTree开始
 三大工作流程，然后使得View展现在我们面前。
 
-
 ![](./绘制流程.png)
 
 ## 绘制的流程概要
@@ -32,7 +31,7 @@ DecorView是视图的顶级View，我们添加的布局文件是它的一个子�
 
 绘制从ViewRootImpl的performTraversals()方法开始，从上到下遍历整个视图树，每个View控件负责绘制自己，而ViewGroup还需要负责通知自己的子View进行绘制操作。
 
-```
+```java
 private void performTraversals() {
     ...
     int childWidthMeasureSpec = getRootMeasureSpec(mWidth, lp.width);
@@ -51,10 +50,7 @@ private void performTraversals() {
 
 ```
 
-
 ## measure
-
-
 
 ### MeasureSpec
 
@@ -63,11 +59,12 @@ MeasureSpec表示的是一个32位的整形值，它的高2位表示测量模式
 ![](./draw_2.png)
 
 mode的模式分为：
+
 - EXACTLY：对应LayoutParams中的match_parent和具体数值这两种模式。检测到View所需要的精确大小，这时候View的最终大小就是SpecSize所指定的值，
 - AT_MOST ：对应LayoutParams中的wrap_content。View的大小不能大于父容器的大小。
 - UNSPECIFIED ：不对View进行任何限制，要多大给多大，一般用于系统内部，如ListView，ScrollView
 
-```
+```java
 public static class MeasureSpec {
         private static final int MODE_SHIFT = 30;
         private static final int MODE_MASK  = 0x3 << MODE_SHIFT;
@@ -120,17 +117,13 @@ public static class MeasureSpec {
 
 由于DecorView继承自FrameLayout，是PhoneWindow的一个内部类，而FrameLayout没有measure方法，因此调用的是父类View的measure方法。
 
-
 ### View的measure
-
-
-
 
 ## layout
 
 ### View的layout流程
 
-```
+```java
 // ViewRootImpl.java
 private void performLayout(WindowManager.LayoutParams lp, int desiredWindowWidth, int desiredWindowHeight) {
     ...
@@ -159,7 +152,7 @@ protected void onLayout(boolean changed, int left, int top, int right, int botto
 
 ### Layout的onLayout
 
-```
+```java
 protected void onlayout(boolean changed, int l, int t, int r, int b) {
     if (mOrientation == VERTICAL) {
         layoutVertical(l, t, r, b);
@@ -207,7 +200,7 @@ private void setChildFrame(View child, int left, int top, int width, int height)
 
 ## draw
 
-```
+```java
 private void performDraw() {
     ...
     draw(fullRefrawNeeded);
@@ -262,14 +255,11 @@ public void draw(Canvas canvas) {
 }
 ```
 
-
-
 ## 常见问题
-
 
 ### 如何在onCreate中获取View的高宽
 
-```
+```java
 //方法1：
 view.post(new Runnable() {            
             @Override
@@ -294,8 +284,6 @@ ViewTreeObserver vto = view.getViewTreeObserver();
 
 ```
 
-
 ## 参考
 
 - [https://jsonchao.github.io/2018/10/28/Android%20View%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/](https://jsonchao.github.io/2018/10/28/Android%20View%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/)
-

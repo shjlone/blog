@@ -12,9 +12,7 @@ tags: Android
 
 ## 概述
 
-
 ## 自定义属性
-
 
 ### 声明属性
 
@@ -76,8 +74,6 @@ public class CustomView extends View {
 }
 ```
 
-
-
 ## 需要注意的点
 
 ### 让View支持wrap_content
@@ -85,7 +81,6 @@ public class CustomView extends View {
 这是因为直接继承View或者ViewGroup的控件，如果不在onMeasure中对wrap_content做特殊处理，那么当外界在布局中使用wrap_content时就无法达到预期的效果
 
 ### 如果有必要，让你的View支持padding
-
 
 这是因为直接继承View的控件，如果不在draw方法中处理padding，那么padding属性是无法起作用的。另外，直接继承自ViewGroup的控件需要在onMeasure和onLayout中考
 虑padding和子元素的margin对其造成的影响，不然将导致padding和子元素的margin失效。
@@ -102,14 +97,7 @@ public class CustomView extends View {
 
 ### View带有滑动嵌套情形时，需要处理好滑动冲突
 
-
-
-
-
-
 ## 参考
 
-- 《Android开发艺术探索》 
+- 《Android开发艺术探索》
 - [自定义控件进阶:declare-styleable重用attr](https://droidyue.com/blog/2014/07/16/better-in-android-include-attrs-in-declare-stylable/)
-
-

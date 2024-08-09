@@ -9,46 +9,63 @@ tags:
 
 **查询设备**
 
-    adb devices
-    List of devices attached
-    emulator-5554  device
-    emulator-5556  device
-    emulator-5558  device
+```shell
+  adb devices
+  List of devices attached
+  emulator-5554  device
+  emulator-5556  device
+  emulator-5558  device
+```
 
 **将命令发送至特定设备**
 
+```shell
     adb -s serial_number command
     adb -s emulator-5556 install helloWorld.apk
+```
 
 **拉取/推送文件**
 
+```shell
     adb pull remote local
     adb push local remote
     adb push foo.txt /sdcard/foo.txt
+```
 
 **开启/停止adb服务器**
 
+```shell
     adb start-server
     adb kill-server
+```
 
-**将日志输出到屏幕**    
+**将日志输出到屏幕**
 
+```shell
     adb logcat [option] [filter-specs]
+
+```
 
 **获取实例序列号**
 
+```shell
     adb get-serialno
-    
+```
+
 **查看应用版本号**
 
+```shell
     adb shell dumpsys package 包名 | findstr version
+```
 
 **调用Activity Manager**
 
+```shell
     adb shell am start -a android.intent.action.VIEW
+```
 
 | 命令                               | 说明                                                                                                                                                                |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ---------------------------------- | ----------------------------------------- |
 | start [options] intent             | 启动 intent 指定的 Activity。                                                                                                                                       |
 | startservice [options] intent      | 启动 intent 指定的 Service                                                                                                                                          |
 | force-stop package                 | 强行停止与 package（应用的包名称）关联的所有应用。                                                                                                                  |
@@ -63,10 +80,11 @@ tags:
 | display-size [reset\|widthxheight] | 替换模拟器/设备显示尺寸。此命令对于在不同尺寸的屏幕上测试您的应用非常有用，它支持使用大屏设备模仿小屏幕分辨率（反之亦然）。示例：am display-size 1280x800           |
 | display-density dpi                | 替换模拟器/设备显示密度。此命令对于在不同密度的屏幕上测试您的应用非常有用，它支持使用低密度屏幕在高密度环境环境上进行测试（反之亦然）。示例：am display-density 480 |
 
-
 **软件包管理器**
 
+```shell
     adb shell pm uninstall com.example.MyApp
+```
 
 | 命令                           | 说明                                                             |
 | ------------------------------ | ---------------------------------------------------------------- |
@@ -78,28 +96,34 @@ tags:
 | clear package                  | 删除与软件包关联的所有数据。                                     |
 | set-install-location location  | 更改默认安装位置。                                               |
 
-
 **屏幕截图**
 
+```shell
     adb shell screencap /sdcard/screen.png
+```
 
 **录制视频**
 
+```shell
     adb shell screenrecord /sdcard/demo.mp4
+```
 
 **其他Shell命令**
 
+```shell
     adb shell ls /sdcard
+```
 
 Shell命令 | 说明
 dumpsys | 将系统数据转储到屏幕
 dumpstate | 将状态转储到文件
-dmesg | 将内核调试消息输出到屏幕。 
+dmesg | 将内核调试消息输出到屏幕。
 start |启动（重启）模拟器/设备实例。
 stop |停止执行模拟器/设备实例。
 
 <br/>
 
+```shell
     adb shell dumpsys activity log anr 2   可以打开anr的messagequeue
     adb shell dumpsys activity a           查看activity详细信息，如显示大小，布局等等
     adb shell dumpsys activity | grep mFocusedActivity
@@ -122,11 +146,11 @@ stop |停止执行模拟器/设备实例。
 
     adb kill-server && adb server && adb shell  重制adb连接
     adb shell dumpsys activity activities   查看当前任务栈
-
+```
 
 ## gfxinfo
 
-```
+```shell
 adb shell dumpsys gfxinfo < PACKAGE_NAME >
 
 
@@ -156,10 +180,9 @@ adb shell dumpsys gfxinfo < PACKAGE_NAME > framestats
 
 ```
 
-
 ### 模拟用户行为
 
-```Java
+```shell
 发送键盘事件
 adb shell input keyevent “value”
 
@@ -173,9 +196,8 @@ input swipe
 
 ```
 
-
-
-**参考**
+## **参考**
 
 - [官方文档](https://developer.android.com/studio/command-line/adb?hl=zh-cn)
 - [http://blog.hsujee.com/2017/09/25/Android/Framework/2017-09-25-Android%E6%A8%A1%E6%8B%9F%E8%BE%93%E5%85%A5%E6%93%8D%E4%BD%9C%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%8E%9F%E7%90%86/](http://blog.hsujee.com/2017/09/25/Android/Framework/2017-09-25-Android%E6%A8%A1%E6%8B%9F%E8%BE%93%E5%85%A5%E6%93%8D%E4%BD%9C%E7%9A%84%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%8E%9F%E7%90%86/)
+- [https://www.cnblogs.com/zhengna/p/10032078.html](https://www.cnblogs.com/zhengna/p/10032078.html)

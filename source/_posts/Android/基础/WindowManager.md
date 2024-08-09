@@ -10,10 +10,8 @@ toc: true
 Window是一个抽象的概念，每一个Window都对应着一个View和一个ViewRootImpl，Window和View通过ViewRootImpl来建立联系，因此Window并不是实际存在的，
 它是以View的形式存在。
 
-
 Android系统中Window有三种类型，分别是应用Window、子Window和系统Window。应用类Window对应着一个Activity。子Window不能单独存在，它需要附属在特定的父Window之中，
 比如常见的一些Dialog就是一个子Window。系统Window是需要声明权限在能创建的Window，比如Toast和系统状态栏这些都是系统Window。
-
 
 Window是分层的，每个Window都有对应的z-ordered，层级大的会覆盖在层级小的Window的上面。在三类Window中，
 应用Window的层级范围是1~99，子Window的层级范围是1000~1999，系统Window的层级范围是2000~2999，这些层级范围对应着WindowManager.LayoutParams的type参数。
@@ -130,10 +128,8 @@ public void addView(View view, ViewGroup.LayoutParams params,
 }
 ```
 
-
 mViews存储的是所有Window所对应的View，mRoots存储的是所有Window所对应的ViewRootImpl，mParams存储的是所有Window所对应的布局参数，
 mDyingViews则存储了那些正在被删除的View对象，或者说是那些已经调用removeView方法但是删除操作还未完成的Window对象。
-
 
 总结如下：
 
@@ -144,14 +140,11 @@ mDyingViews则存储了那些正在被删除的View对象，或者说是那些�
     2. WindowSession最终来完成Window的添加过程
     3. 在Session内部会通过WindowManagerService来实现Window的添加
 
-
 ![](./2.jpg)
 
 ### removeView过程
 
 ### updateView过程
-
-
 
 ## Window的创建过程
 
@@ -234,8 +227,6 @@ protected DecorView generateDecor(int featureId) {
 2. 将View添加到DecorView的mContentParent中
 3. 回调Activity的onContentChanged方法通知Activity视图已经发生改变
 4. ActivityThread中的handleResumeActivity只通过WindowManager添加视图到DecorView中
-
-
 
 ## 参考
 

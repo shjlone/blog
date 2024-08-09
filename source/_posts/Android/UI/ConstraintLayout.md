@@ -16,14 +16,11 @@ toc: true
 
 ### layout_constraintLeft_toRightOf
 
-
 constraintXXX表示约束View自己，XXX分别表示上下左右等位置，toXXXOf表示约束依赖等对象，可以是同级的View，也可以是parent。
-
 
 ### layout_constraintBaseline_toBaselineOf
 
 对于TextView，可以使用基线对齐，这样文字就能对齐了。
-
 
 ### margin
 
@@ -38,9 +35,7 @@ constraintXXX表示约束View自己，XXX分别表示上下左右等位置，toX
 - android:layout_marginRight
 - android:layout_marginBottom
 
-
 ### goneMargin
-
 
 - goneMargin 要和 margin 一起使用才有效
 - 在约束的布局 Gone 时，View 自身的 margin 属性会被 goneMargin 替换
@@ -57,19 +52,14 @@ constraintXXX表示约束View自己，XXX分别表示上下左右等位置，toX
 
 ### bias
 
-
-
 - layout_constraintHorizontal_bias 水平偏移
 - layout_constraintVertical_bias 垂直偏移
 
 两个属性的取值范围在0-1。在水平偏移中，0表示最左，1表示最右；在垂直偏移，0表示最上，1表示最下；0.5表示中间。
 
-
 ## Group
 
-## 
-
-
+##
 
 ## 参考
 

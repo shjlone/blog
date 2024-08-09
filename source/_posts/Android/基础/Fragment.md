@@ -36,11 +36,9 @@ onCrateView执行后立即执行，此时可以获取view
 
 系统会将此方法作为用户离开片段的第一个信号（但并不总是意味着此片段会被销毁）进行调用。
 
-
 ***onAttach()***
 
 在片段已与 Activity 关联时进行调用（Activity 传递到此方法内）。
-
 
 ***onActivityCreated()***
 
@@ -54,22 +52,17 @@ onCrateView执行后立即执行，此时可以获取view
 
 在取消片段与 Activity 的关联时进行调用。
 
-
 ### Activity和Fragment的生命周期
 
 ![](./complete_android_fragment_lifecycle.png)
-
 
 ### Activity, Fragment和FragmentManager生命周期
 
 ![](./android-lifecycle-activity-to-fragments.png)
 
-
-
 **注意点**
 
 - 注意生命周期的对应，比如Eventbus的注册和取消注册
-
 
 ## 事务
 
@@ -97,13 +90,9 @@ onCrateView执行后立即执行，此时可以获取view
 
 - FragmentActivity和Fragment都有自己的FragmentManager
 
-
-
 ### 事务的操作
 
 ## 如何通信
-
-
 
 可通过以下一些方式进行通信：
 
@@ -113,7 +102,6 @@ onCrateView执行后立即执行，此时可以获取view
 - setArguments将参数传递给Fragment  
 - 共享ViewModel
 - Fragment Result API
-
 
 ### 直接获取引用
 
@@ -171,11 +159,9 @@ public static class FragmentA extends ListFragment {
 
 ```
 
-
 ### 共享ViewModel
 
 #### 与宿主Activity通信
-
 
 ```Java
 public class ItemViewModel extends ViewModel {
@@ -223,7 +209,6 @@ public class ListFragment extends Fragment {
 ```
 
 将ViewModel放到同一范围，这样返回的是同一个ViewModel。
-
 
 #### 与其他Fragment通信
 
@@ -316,7 +301,6 @@ public class ChildFragment extends Fragment {
 在某些情况下，您可能要在 Fragment 之间或 Fragment 与其宿主 Activity 之间传递一次性值。则可以使用setFragmentResultListener。
 它的原理是在getParentFragmentManager实现了观察者模式。
 
-
 #### 与其他Fragment通信
 
 ![](./fragment-a-to-b.png)
@@ -327,7 +311,6 @@ public class ChildFragment extends Fragment {
 
 - 返回堆栈上的 Fragment 只有在被弹出且处于 STARTED 状态之后才会收到结果。
 - 如果在设置结果时监听结果的 Fragment 处于 STARTED 状态，则会立即触发监听器的回调。
-
 
 ```java
 @Override
@@ -355,7 +338,6 @@ button.setOnClickListener(new View.OnClickListener() {
 });
 
 ```
-
 
 #### 父子Fragment通信
 
@@ -388,7 +370,6 @@ button.setOnClickListener(new View.OnClickListener() {
 
 
 ```
-
 
 #### 与宿主Activity通信
 

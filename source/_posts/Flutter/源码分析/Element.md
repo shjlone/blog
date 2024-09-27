@@ -155,6 +155,8 @@ Element? updateChild(Element? child, Widget? newWidget, Object? newSlot) {}
 #### StatelessElement
 
 ```dart
+
+class StatelessElement {
   @override
   void update(StatelessWidget newWidget) {
     super.update(newWidget);
@@ -162,6 +164,11 @@ Element? updateChild(Element? child, Widget? newWidget, Object? newSlot) {}
     _dirty = true;
     rebuild();
   }
+
+  /// 
+  Widget build() => (widget as StatelessWidget).build(this);
+
+}
 ```
 
 rebuild调用performRebuild，调用当前build方法和updateChild。

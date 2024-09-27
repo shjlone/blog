@@ -297,5 +297,6 @@ ColorTween(begin: Colors.green, end: Colors.red,).amimate(CurvedAnimation(parent
 
 ## 参考
 
+- [flutter_spinkit](https://pub.dev/packages/flutter_spinkit)
 - [Flutter实战-动画](https://book.flutterchina.club/chapter9/intro.html#_9-1-1-%E5%8A%A8%E7%94%BB%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86)
 - [深入理解Flutter动画原理](http://gityuan.com/2019/07/13/flutter_animator/)

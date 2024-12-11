@@ -35,6 +35,23 @@ nexus restart
 
 ```
 
+```shell
+# 错误
+Unrecognized option: --add-reads=java.xml=java.logging
+Error: Could not create the Java Virtual Machine.
+Error: A fatal exception has occurred. Program will exit.
+
+# 解决
+配置java路径，打开nexus文件，配置INSTALL4J_JAVA_HOME_OVERRIDE=/Library/Java/JavaVirtualMachines/jdk-17.0.1.jdk
+```
+
+
+## 默认账号密码
+
+```shell
+# 账号admin，密码在安装目录的密码文件中
+/Users/User/Tools/nexus-3.74.0-05-mac/sonatype-work/nexus3/admin.password
+```
 
 ## 新建npm私有仓库
 

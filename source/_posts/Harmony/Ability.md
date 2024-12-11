@@ -1,9 +1,11 @@
 ---
-title: UIAbility
+title: Ability
 tags: Harmony 
 toc: true
 ---
 
+
+[@ohos.app.ability.Ability (Ability基类)](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-app-ability-ability-V5)
 
 ## 生命周期
 
